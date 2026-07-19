@@ -2,1193 +2,815 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>أفراح آل الحو | دعوة زفاف العريس محمد </title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;700;900&family=Reem+Kufi:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- مكتبة الخرائط التفاعلية Leaflet -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <!-- مكتبة Tailwind بالتجاوب التلقائي -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أفراح آل الحو - دعوة زفاف ذكية تفاعلية</title>
+    
+    <!-- Tailwind CSS for modern responsive styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- Google Fonts for premium arabic typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Leaflet CSS for elegant maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            50: '#f4f7fa',
+                            100: '#e5eef4',
+                            600: '#2c608a',
+                            700: '#1c4b72', // Royal Navy Blue from design
+                            800: '#153a59',
+                            900: '#0f2940',
+                        },
+                        gold: {
+                            100: '#fbf7f0',
+                            200: '#f5ebd2',
+                            500: '#d4af37',
+                            600: '#c29d6d', // Premium Champagne Gold from card
+                            700: '#a37e50',
+                        },
+                        cream: '#fcfbf7' // Beautiful soft background
+                    },
+                    fontFamily: {
+                        amiri: ['Amiri', 'serif'],
+                        cairo: ['Cairo', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        :root {
-            --primary: #1c4b72;       /* الأزرق الداكن الملكي */
-            --primary-light: #2c6394;
-            --accent: #c29d6d;        /* الذهبي الفاخر */
-            --accent-glow: rgba(194, 157, 109, 0.4);
-            --bg-cream: #faf8f2;      /* خلفية كريمية فخمة */
-            --white: #ffffff;
-            --text-dark: #2d3748;
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fcfbf7;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c29d6d;
+            border-radius: 3px;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            -webkit-tap-highlight-color: transparent;
+        /* Ambient subtle animations */
+        @keyframes goldGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(194, 157, 109, 0.4); }
+            50% { box-shadow: 0 0 25px rgba(194, 157, 109, 0.8); }
+        }
+        .gold-glow {
+            animation: goldGlow 3s infinite ease-in-out;
         }
 
-        body {
-            background-color: var(--bg-cream);
-            font-family: 'Cairo', sans-serif;
-            color: var(--text-dark);
-            overflow-x: hidden;
-            scroll-behavior: smooth;
+        /* Leaflet map styles to match dark and gold aesthetic */
+        .custom-map {
+            border: 3px solid #c29d6d;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px -5px rgba(28, 75, 114, 0.2);
         }
 
-        h1, h2, h3, .poetic-font {
-            font-family: 'Reem Kufi', serif;
-        }
-
-        /* تنسيق مخصص للأوراق النازلة لضمان عدم حدوث بطء في الجوالات */
-        .petals-container {
+        /* Falling golden leaves container */
+        #leafContainer {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 99;
+            z-index: 10;
             overflow: hidden;
         }
 
-        .petal {
+        .leaf {
             position: absolute;
-            background: radial-gradient(circle, #f3e5ab 0%, var(--accent) 100%);
-            border-radius: 15% 70% 15% 70%;
-            opacity: 0.7;
-            pointer-events: none;
-            animation: fall linear infinite;
-        }
-
-        @keyframes fall {
-            0% {
-                transform: translateY(-10vh) rotate(0deg) translateX(0);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(110vh) rotate(360deg) translateX(50px);
-                opacity: 0;
-            }
-        }
-
-        /* لقطة ثابتة للأوراق في الجوال لمنع البطء والتعليق */
-        @media (max-width: 767px) {
-            .petal {
-                animation: none !important;
-                opacity: 0.8 !important;
-                width: 22px !important;
-                height: 22px !important;
-                position: fixed !important;
-            }
-        }
-
-        #envelope-wrapper {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #121824;
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: transform 1.2s cubic-bezier(0.85, 0, 0.15, 1), opacity 1s;
-        }
-
-        /* تصميم ظرف الزفاف المتجاوب بالكامل */
-        .envelope {
-            width: 90%;
-            max-width: 450px;
-            height: 300px;
-            background: var(--primary);
-            border-radius: 10px;
-            position: relative;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
-            cursor: pointer;
-            border: 2px solid var(--accent);
-            perspective: 1000px;
-        }
-
-        .envelope-flap {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 50%;
-            background-color: var(--primary-light);
-            clip-path: polygon(0 0, 100% 0, 50% 100%);
-            transform-origin: top;
-            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 2;
-        }
-
-        /* الختم الشمعي بتمركز رياضي مطلق لا يخرب في متصفحات الجوال */
-        .wax-seal {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 85px;
-            height: 85px;
-            background: radial-gradient(circle, #e2ba80 0%, #a67c45 100%);
-            border-radius: 50%;
-            z-index: 3;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,255,255,0.4);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: var(--primary);
-            font-size: 1.8rem;
-            border: 3px double #7c5726;
-            animation: pulse 2s infinite;
-            transition: transform 0.4s;
-        }
-
-        .wax-seal span {
-            font-family: 'Reem Kufi', sans-serif;
-            font-weight: bold;
-            text-shadow: 1px 1px 1px rgba(255,255,255,0.3);
-        }
-
-        @keyframes pulse {
-            0% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 0 rgba(194, 157, 109, 0.7); }
-            70% { transform: translate(-50%, -50%) scale(1.08); box-shadow: 0 0 0 15px rgba(194, 157, 109, 0); }
-            100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 0 rgba(194, 157, 109, 0); }
-        }
-
-        .envelope-text {
-            position: absolute;
-            bottom: 25px;
-            left: 0;
-            width: 100%;
-            color: var(--accent);
-            text-align: center;
-            font-size: 1.2rem;
-            z-index: 1;
-            line-height: 1.6;
-        }
-
-        .unlocked #envelope-wrapper {
-            transform: translateY(-100%);
-            opacity: 0;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23c29d6d" width="24" height="24"><path d="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C12,19.7 18,12 19,8H17M16,2A10,10 0 0,0 6,12C6,17.5 10.5,22 16,22A10,10 0 0,0 26,12C26,6.5 21.5,2 16,2Z"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            opacity: 0.65;
             pointer-events: none;
         }
 
-        .control-btns-container {
+        /* Premium scroll progress indicator */
+        .progress-bar {
             position: fixed;
-            bottom: 25px;
-            left: 25px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            z-index: 999;
-        }
-
-        .action-btn {
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
-            background-color: var(--primary);
-            border: 2px solid var(--accent);
-            color: var(--accent);
-            font-size: 1.3rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .action-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 15px var(--accent-glow);
-        }
-
-        .music-btn.playing {
-            animation: rotate 4s linear infinite;
-        }
-
-        @keyframes rotate {
-            100% { transform: rotate(360deg); }
-        }
-
-        /* تنسيق قسم الشعر الفاخر */
-        .poetry-wrapper {
-            background-color: var(--primary);
-            color: var(--accent);
-            padding: 60px 20px;
-            text-align: center;
-            border-top: 3px solid var(--accent);
-            border-bottom: 3px solid var(--accent);
-            position: relative;
-        }
-
-        .stanza {
-            margin-bottom: 45px;
-        }
-
-        .stanza:last-child {
-            margin-bottom: 0;
-        }
-
-        .poetry-line {
-            font-family: 'Amiri', serif;
-            font-size: 1.8rem;
-            line-height: 2;
-            font-weight: bold;
-            margin: 10px 0;
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .poetry-line.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* قسم الشراع التفاعلي */
-        #sail-section {
-            position: relative;
-            min-height: 80vh;
-            background-color: #0f2235;
-            color: var(--white);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            border-bottom: 3px solid var(--accent);
-        }
-
-        .sail-curtain-left, .sail-curtain-right {
-            position: absolute;
             top: 0;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(135deg, #112d46 0%, #1c4b72 100%);
-            transition: transform 1.5s cubic-bezier(0.77, 0, 0.175, 1);
-            z-index: 5;
-            display: flex;
-            align-items: center;
-            overflow: hidden;
-        }
-
-        .sail-curtain-left {
-            left: 0;
-            border-right: 2px solid var(--accent);
-            justify-content: flex-end;
-        }
-
-        .sail-curtain-right {
             right: 0;
-            border-left: 2px solid var(--accent);
-            justify-content: flex-start;
+            height: 4px;
+            background: linear-gradient(to left, #c29d6d, #1c4b72);
+            z-index: 100;
+            width: 0%;
+            transition: width 0.1s ease-out;
         }
 
-        .curtain-pattern {
-            font-size: 15rem;
-            color: rgba(194, 157, 109, 0.08);
-            user-select: none;
-        }
-
-        .sail-curtain-left .curtain-pattern { transform: translateX(50px); }
-        .sail-curtain-right .curtain-pattern { transform: translateX(-50px); }
-
-        .sail-prompt {
-            position: absolute;
-            z-index: 6;
-            text-align: center;
-            color: var(--accent);
-            background: rgba(15, 34, 53, 0.9);
-            padding: 20px 40px;
-            border-radius: 50px;
-            border: 2px solid var(--accent);
-            cursor: pointer;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-
-        .sail-prompt:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px var(--accent);
-        }
-
-        #sail-section.opened .sail-curtain-left { transform: translateX(-100%); }
-        #sail-section.opened .sail-curtain-right { transform: translateX(100%); }
-        #sail-section.opened .sail-prompt { opacity: 0; pointer-events: none; }
-
-        .sail-details {
-            text-align: center;
-            opacity: 0;
-            transform: scale(0.9);
-            transition: all 1s ease 0.5s;
-            z-index: 1;
-            padding: 30px;
-            max-width: 600px;
-        }
-
-        #sail-section.opened .sail-details {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        .detail-card {
-            background: rgba(255,255,255,0.06);
-            border: 2px solid var(--accent);
-            border-radius: 20px;
-            padding: 40px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-        }
-
-        .icon-circle {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: var(--accent);
-            color: var(--primary);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 2.2rem;
-            margin: -80px auto 25px auto;
-            border: 4px solid #0f2235;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-
-        /* الميثاق الغليظ وعقد القران */
-        .marriage-section {
-            padding: 80px 20px;
-            background-color: var(--bg-cream);
-            text-align: center;
-        }
-
-        .marriage-book {
-            max-width: 800px;
-            margin: 0 auto;
-            background: var(--white);
-            border: 1px solid rgba(194, 157, 109, 0.3);
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
-            padding: 40px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .marriage-book::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 50%;
-            width: 1px;
-            background: rgba(194, 157, 109, 0.3);
-        }
-
-        @media (max-width: 768px) {
-            .marriage-book::before { display: none; }
-            .book-columns { flex-direction: column; gap: 30px; }
-        }
-
-        .book-columns {
-            display: flex;
-            justify-content: space-between;
-            text-align: center;
-        }
-
-        .book-column {
-            flex: 1;
-            padding: 0 20px;
-        }
-
-        /* نافذة المساعد الذكي */
-        .chat-container {
-            position: fixed;
-            bottom: 95px;
-            left: 25px;
-            width: 350px;
-            max-width: calc(100vw - 50px);
-            height: 450px;
-            background: var(--white);
-            border: 2px solid var(--accent);
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            z-index: 1000;
-            display: none;
-            flex-direction: column;
-            overflow: hidden;
-            animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        @keyframes slideUp {
-            from { transform: translateY(50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .chat-header {
-            background-color: var(--primary);
-            color: var(--white);
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid var(--accent);
-        }
-
-        .chat-messages {
-            flex: 1;
-            padding: 15px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            background-color: var(--bg-cream);
-        }
-
-        .chat-bubble {
-            max-width: 80%;
-            padding: 10px 14px;
-            border-radius: 12px;
-            font-size: 0.95rem;
-            line-height: 1.5;
-        }
-
-        .chat-bubble.bot {
-            background-color: var(--white);
-            border-right: 4px solid var(--accent);
-            align-self: flex-start;
-            text-align: right;
-        }
-
-        .chat-bubble.user {
-            background-color: var(--primary);
-            color: var(--white);
-            align-self: flex-end;
-            text-align: right;
-        }
-
-        .reveal {
-            opacity: 0;
-            transform: translateY(40px);
-            transition: all 1s ease-out;
-        }
-
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
-        @keyframes zoomIn { to { opacity: 1; transform: scale(1); } }
-        @keyframes popIn {
-            from { opacity: 0; transform: scale(0.8); }
-            to { opacity: 1; transform: scale(1); }
+        /* Split curtain styling */
+        .curtain-panel {
+            transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1);
         }
     </style>
 </head>
-<body class="bg-[#faf8f2]">
+<body class="bg-cream font-cairo text-navy-900 selection:bg-gold-200 selection:text-navy-900 overflow-x-hidden">
 
-    <div class="petals-container" id="petals"></div>
+    <!-- Scroll Progress Indicator -->
+    <div class="progress-bar" id="progressBar"></div>
 
-    <!-- نافذة إشعارات مخصصة لتجنب استخدام alert على الجوال -->
-    <div id="custom-toast" class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-[#121824] text-[#faf8f2] border-2 border-[#c29d6d] py-3 px-6 rounded-xl shadow-2xl z-[99999] transition-all duration-300 opacity-0 pointer-events-none text-center font-bold">
-        <span id="toast-message">تمت العملية بنجاح!</span>
-    </div>
+    <!-- Background Golden Accents for Mobile & Falling Leaves for Desktop -->
+    <div id="leafContainer"></div>
 
-    <!-- 1. غلاف المغلف الفخم عند البداية -->
-    <div id="envelope-wrapper">
-        <div class="envelope" onclick="openInvitation()">
-            <div class="envelope-flap" id="flap"></div>
-            <div class="wax-seal">
-                <span>الحو</span>
-            </div>
-            <div class="envelope-text">
-                <p class="font-bold">دعوة زفاف خاصة</p>
-                <small class="text-sm">انقر على الختم لفتح الدعوة </small>
-            </div>
-        </div>
-    </div>
-
-    <!-- أزرار التحكم بالمساعدة والزفة الصوتية -->
-    <div class="control-btns-container">
-        <!-- زر المساعد الذكي -->
-        <button class="action-btn" id="chatToggleBtn" onclick="toggleChat()" title="المساعد الذكي">
-            <i class="fa-solid fa-wand-magic-sparkles"></i>
-        </button>
-        <!-- زر الموسيقى -->
-        <button class="action-btn music-btn" id="musicBtn" onclick="toggleMusic()" title="تشغيل اللحن">
-            <i class="fa-solid fa-music"></i>
+    <!-- Floating Audio Control Player -->
+    <div id="audioPlayer" class="fixed bottom-6 right-6 z-50 hidden">
+        <button id="togglePlayBtn" class="w-14 h-14 bg-gradient-to-tr from-gold-600 to-gold-500 rounded-full flex items-center justify-center text-white shadow-lg focus:outline-none transition-all duration-300 hover:scale-110 gold-glow">
+            <i class="fa-solid fa-volume-high text-xl" id="audioIcon"></i>
         </button>
     </div>
 
-    <!-- زفة بدون موسيقى (صوت بشري نقي مميز) -->
-    <audio id="weddingMusic" loop preload="auto">
-        <source src="https://archive.org/download/mixvocalonlynasheeds/Baraka%20Allahu%20Lakuma%20%28Vocals%20Only%20Versio%29.mp3" type="audio/mpeg">
+    <!-- Hidden native audio element using high-quality background spiritual zaffa loop (vocal only, no music) -->
+    <audio id="zaffaAudio" loop preload="auto">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" type="audio/mpeg">
     </audio>
 
-    <div class="chat-container" id="chatContainer">
-        <div class="chat-header">
-            <h4 class="font-bold">مساعد الذكي ✨</h4>
-            <button onclick="toggleChat()"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div class="chat-messages" id="chatMessages">
-            <div class="chat-bubble bot">
-                أهلاً بك يا ضيفنا العزيز! 🌸 أنا المساعد الذكي لأسرة آل الحو. يسعدني إجابتك على أي استفسار يخص حفل زفاف ابننا الغالي محمد مراد في مدينة الشحر. كيف يمكنني خدمتك اليوم؟
+    <!-- Outer Envelope Screen (Wax Seal Door) -->
+    <div id="envelopeOverlay" class="fixed inset-0 z-50 bg-gradient-to-br from-navy-800 to-navy-900 flex flex-col items-center justify-center p-4 transition-all duration-1000 ease-in-out">
+        
+        <!-- Luxury Islamic Frame Ornament -->
+        <div class="absolute inset-4 md:inset-8 border border-gold-600 opacity-30 rounded-lg pointer-events-none"></div>
+        <div class="absolute inset-6 md:inset-10 border border-dashed border-gold-700 opacity-20 rounded-lg pointer-events-none"></div>
+        
+        <div class="text-center z-10 max-w-md mx-auto px-6">
+            <p class="text-gold-600 font-amiri text-2xl tracking-widest mb-2">بسم الله الرحمن الرحيم</p>
+            <div class="w-20 h-px bg-gold-600 mx-auto my-4 opacity-60"></div>
+            
+            <h1 class="text-gold-500 font-amiri text-4xl font-bold tracking-wide mb-3 leading-relaxed">أفراح آل الحو</h1>
+            <p class="text-white font-light text-sm md:text-base mb-8 tracking-wider opacity-90 leading-loose">يتشرف آل الحو بدعوتكم لمشاركتهم ليلة العمر الكبرى</p>
+            
+            <!-- Beautiful interactive Wax Seal Seal Button -->
+            <div class="relative cursor-pointer group my-8" id="waxSealBtn">
+                <div class="absolute inset-0 bg-gold-500 rounded-full blur-xl opacity-30 group-hover:opacity-60 transition duration-500"></div>
+                
+                <!-- Main Wax Seal Body -->
+                <div class="relative w-28 h-28 bg-gradient-to-r from-gold-700 via-gold-600 to-gold-700 rounded-full flex items-center justify-center border-4 border-gold-500 shadow-2xl transform group-hover:scale-105 active:scale-95 transition-all duration-300">
+                    <div class="w-22 h-22 border border-gold-200 border-dashed rounded-full flex flex-col items-center justify-center text-white">
+                        <i class="fa-solid fa-heart text-2xl text-gold-200 animate-pulse mb-1"></i>
+                        <span class="text-xs font-bold tracking-widest text-gold-100">افتح الدعوة</span>
+                    </div>
+                </div>
             </div>
+            
+            <p class="text-gold-600 text-xs tracking-wider animate-pulse mt-4">انقر فوق الختم لفتح المغلف وسماع الزفة</p>
         </div>
-        <div class="flex gap-2 p-2 overflow-x-auto bg-white border-t border-gray-100">
-            <button class="bg-[#c29d6d]/20 text-[#1c4b72] border border-[#c29d6d] px-3 py-1 rounded-full whitespace-nowrap text-sm hover:bg-[#1c4b72] hover:text-white transition" onclick="sendSuggestion('متى موعد رفع الشراع؟')">رفع الشراع؟</button>
-            <button class="bg-[#c29d6d]/20 text-[#1c4b72] border border-[#c29d6d] px-3 py-1 rounded-full whitespace-nowrap text-sm hover:bg-[#1c4b72] hover:text-white transition" onclick="sendSuggestion('أين يقع جامع يعقوب الحمد؟')">موقع المسجد؟</button>
-            <button class="bg-[#c29d6d]/20 text-[#1c4b72] border border-[#c29d6d] px-3 py-1 rounded-full whitespace-nowrap text-sm hover:bg-[#1c4b72] hover:text-white transition" onclick="sendSuggestion('متى صبحة العريس؟')">صبحة العريس؟</button>
+
+        <!-- Decorative Floral SVG Corner Accents -->
+        <div class="absolute top-0 right-0 w-24 h-24 md:w-36 md:h-36 text-gold-600 opacity-25">
+            <svg viewBox="0 0 100 100" fill="currentColor" class="w-full h-full transform rotate-90">
+                <path d="M0,0 C20,10 40,30 50,50 C30,40 10,20 0,0 Z M0,0 C30,10 60,30 70,60 C50,50 20,20 0,0 Z"/>
+            </svg>
         </div>
-        <div class="flex border-t border-gray-200 p-2 bg-white">
-            <input type="text" id="chatInput" class="flex-1 border border-gray-200 rounded-full px-4 py-2 outline-none" placeholder="اكتب سؤالك هنا عن الفرح..." onkeypress="handleChatKeyPress(event)">
-            <button onclick="sendMessage()" class="bg-[#1c4b72] text-white w-10 h-10 rounded-full mr-2 flex justify-center items-center"><i class="fa-solid fa-paper-plane"></i></button>
+        <div class="absolute bottom-0 left-0 w-24 h-24 md:w-36 md:h-36 text-gold-600 opacity-25">
+            <svg viewBox="0 0 100 100" fill="currentColor" class="w-full h-full transform -rotate-90">
+                <path d="M0,0 C20,10 40,30 50,50 C30,40 10,20 0,0 Z M0,0 C30,10 60,30 70,60 C50,50 20,20 0,0 Z"/>
+            </svg>
         </div>
     </div>
 
-    <!-- 2. قسم الترحيب الرئيسي والبسملة -->
-    <header class="min-height-[100vh] flex flex-col justify-center items-center text-center py-20 px-5 relative bg-gradient-to-b from-white to-[#faf8f2] border-b-2 border-double border-[#c29d6d]">
-        <div class="basmalah text-2xl text-[#1c4b72] font-serif mb-6 opacity-0 translate-y-5 animate-[fadeInUp_1s_forwards_0.5s]">بسم الله الرحمن الرحيم</div>
+    <!-- Main Content Container (Hidden until Envelope is Opened) -->
+    <div id="mainContainer" class="hidden transition-opacity duration-1000 ease-in opacity-0">
         
-        <h1 class="main-title text-4xl md:text-5xl lg:text-6xl text-[#1c4b72] font-extrabold my-4 opacity-0 translate-y-5 animate-[fadeInUp_1.2s_forwards_1s]">أفراح آل الحو</h1>
-        
-        <div class="hosts-text text-lg md:text-xl max-w-2xl leading-loose text-gray-700 my-6 opacity-0 translate-y-5 animate-[fadeInUp_1.2s_forwards_1.5s]">
-            تتشرف أسرة المرحوم <b class="text-[#1c4b72] font-bold">أحمد عوض الحو</b> وأولاده<br>
-            بدعوتكم لحضور مراسم زواج ابنهم
-        </div>
-
-        <div class="groom-box border-2 border-[#c29d6d] rounded-2xl py-5 px-10 md:px-16 bg-white shadow-lg mx-auto inline-block opacity-0 scale-90 animate-[zoomIn_1.5s_forwards_2s]">
-            <h2 class="text-3xl md:text-4xl text-[#1c4b72] font-extrabold">محمد بن مراد</h2>
-        </div>
-    </header>
-
-    <!-- 3. الأبيات الشعرية العائمة -->
-    <section class="poetry-wrapper">
-        <div class="stanza">
-            <div class="poetry-line">هلت ليالي الانس والافراح</div>
-            <div class="poetry-line">والي حضر مابينكم مرتاح</div>
-            <div class="poetry-line">محمد مراد من خيرة العرسان</div>
-            <div class="poetry-line text-[#c29d6d] font-bold">أهلاً بكم في حارة الإحسان</div>
-        </div>
-        
-        <div class="stanza">
-            <div class="poetry-line">مراد احمد بيده المفتاح</div>
-            <div class="poetry-line">وينتبهلك ساعة المرواح</div>
-            <div class="poetry-line">واخوان ع يسرته والايمان</div>
-            <div class="poetry-line text-[#c29d6d] font-bold">أهلاً بكم في حارة الإحسان</div>
-        </div>
-
-        <div class="stanza">
-            <div class="poetry-line">ي عريسنا ي الشاب ي الناجح</div>
-            <div class="poetry-line">طبعك مع الاصحاب تتصالح</div>
-            <div class="poetry-line">نا نحسبك من خيرة الولدان</div>
-            <div class="poetry-line text-[#c29d6d] font-bold">أهلاً بكم في حارة الاحسان</div>
-        </div>
-    </section>
-
-    <!-- 4. العداد التنازلي التفاعلي -->
-    <section class="countdown-container reveal py-12 px-5 text-center bg-white">
-        <h3 class="countdown-title text-[#1c4b72] text-xl font-bold mb-6">متبقي على المراسيم</h3>
-        <div class="timer flex justify-center gap-4 md:gap-6 flex-wrap">
-            <div class="time-box bg-[#1c4b72] text-white border-2 border-[#c29d6d] rounded-xl p-4 min-w-[85px] md:min-w-[100px] shadow-lg">
-                <span id="days" class="block text-2xl md:text-3xl font-extrabold text-[#c29d6d]">00</span>
-                <label class="text-xs text-slate-300">أيام</label>
+        <!-- Header Hero Section with Elegant Poetry Background -->
+        <section id="hero" class="relative min-height-screen py-16 md:py-24 flex flex-col items-center justify-center bg-cream px-4 text-center overflow-hidden">
+            
+            <!-- Mobile Fallback Leaf Accents (Fixed in corners for performance) -->
+            <div class="absolute top-4 left-4 w-12 h-12 text-gold-600 opacity-40 block lg:hidden">
+                <i class="fa-solid fa-leaf text-2xl rotate-45"></i>
             </div>
-            <div class="time-box bg-[#1c4b72] text-white border-2 border-[#c29d6d] rounded-xl p-4 min-w-[85px] md:min-w-[100px] shadow-lg">
-                <span id="hours" class="block text-2xl md:text-3xl font-extrabold text-[#c29d6d]">00</span>
-                <label class="text-xs text-slate-300">ساعات</label>
+            <div class="absolute top-4 right-4 w-12 h-12 text-gold-600 opacity-40 block lg:hidden">
+                <i class="fa-solid fa-leaf text-2xl -rotate-45"></i>
             </div>
-            <div class="time-box bg-[#1c4b72] text-white border-2 border-[#c29d6d] rounded-xl p-4 min-w-[85px] md:min-w-[100px] shadow-lg">
-                <span id="minutes" class="block text-2xl md:text-3xl font-extrabold text-[#c29d6d]">00</span>
-                <label class="text-xs text-slate-300">دقائق</label>
-            </div>
-            <div class="time-box bg-[#1c4b72] text-white border-2 border-[#c29d6d] rounded-xl p-4 min-w-[85px] md:min-w-[100px] shadow-lg">
-                <span id="seconds" class="block text-2xl md:text-3xl font-extrabold text-[#c29d6d]">00</span>
-                <label class="text-xs text-slate-300">ثواني</label>
-            </div>
-        </div>
-    </section>
 
-    <!-- 5. قسم "رفع الشراع" - الستارة الفاصلة التفاعلية -->
-    <section id="sail-section" class="reveal">
-        <div class="sail-curtain-left">
-            <i class="fa-solid fa-ship curtain-pattern"></i>
-        </div>
-        <div class="sail-curtain-right">
-            <i class="fa-solid fa-ship curtain-pattern"></i>
-        </div>
-        
-        <div class="sail-prompt" id="sailPrompt" onclick="openSail()">
-            <i class="fa-solid fa-anchor"></i> انقر هنا لرفع الشراع
-        </div>
+            <div class="max-w-2xl mx-auto space-y-8 z-10">
+                <!-- Basmalah -->
+                <p class="font-amiri text-2xl text-gold-600 font-bold tracking-widest mb-4">بسم الله الرحمن الرحيم</p>
+                
+                <p class="text-xs tracking-widest text-navy-600 font-bold uppercase">بطاقة دعوة زفاف الكترونية ذكية</p>
+                <h2 class="font-amiri text-5xl md:text-6xl text-navy-700 font-bold tracking-wide mt-2">أفراح آل الحو</h2>
+                
+                <div class="w-32 h-0.5 bg-gradient-to-r from-transparent via-gold-600 to-transparent mx-auto my-6"></div>
 
-        <div class="sail-details">
-            <div class="detail-card">
-                <div class="icon-circle">
-                    <i class="fa-solid fa-campground"></i>
+                <!-- Poetry Stanzas (Elegantly Structured) -->
+                <div class="space-y-10 my-12" id="poetryStanzas">
+                    <!-- Stanza 1 -->
+                    <div class="opacity-0 translate-y-8 transition-all duration-1000 ease-out poetry-box bg-gold-100/50 p-6 rounded-2xl border border-gold-200 shadow-sm">
+                        <p class="font-amiri text-xl md:text-2xl text-navy-700 leading-relaxed font-bold mb-2">هلت ليالي الانس والافراح</p>
+                        <p class="font-amiri text-xl md:text-2xl text-navy-700 leading-relaxed font-bold mb-4">والي حضر مابينكم مرتاح</p>
+                        <p class="font-amiri text-lg md:text-xl text-gold-700 font-semibold mb-2">محمد مراد من خيرة العرسان</p>
+                        <p class="font-amiri text-lg md:text-xl text-gold-700 font-semibold">أهلاً بكم في حارة الإحسان</p>
+                    </div>
+
+                    <!-- Stanza 2 -->
+                    <div class="opacity-0 translate-y-8 transition-all duration-1000 ease-out poetry-box bg-gold-100/50 p-6 rounded-2xl border border-gold-200 shadow-sm delay-200">
+                        <p class="font-amiri text-xl md:text-2xl text-navy-700 leading-relaxed font-bold mb-2">مراد احمد بيده المفتاح</p>
+                        <p class="font-amiri text-xl md:text-2xl text-navy-700 leading-relaxed font-bold mb-4">وينتبهلك ساعة المرواح</p>
+                        <p class="font-amiri text-lg md:text-xl text-gold-700 font-semibold mb-2">واخوان ع يسرته والايمان</p>
+                        <p class="font-amiri text-lg md:text-xl text-gold-700 font-semibold">أهلاً بكم في حارة الإحسان</p>
+                    </div>
+
+                    <!-- Stanza 3 -->
+                    <div class="opacity-0 translate-y-8 transition-all duration-1000 ease-out poetry-box bg-gold-100/50 p-6 rounded-2xl border border-gold-200 shadow-sm delay-400">
+                        <p class="font-amiri text-xl md:text-2xl text-navy-700 leading-relaxed font-bold mb-2">ي عريسنا ي الشاب ي الناجح</p>
+                        <p class="font-amiri text-xl md:text-2xl text-navy-700 leading-relaxed font-bold mb-4">طبعك مع الاصحاب تتصالح</p>
+                        <p class="font-amiri text-lg md:text-xl text-gold-700 font-semibold mb-2">نا نحسبك من خيرة الولدان</p>
+                        <p class="font-amiri text-lg md:text-xl text-gold-700 font-semibold">أهلاً بكم في حارة الاحسان</p>
+                    </div>
                 </div>
-                <h3 class="text-[#c29d6d] font-bold mb-4 text-2xl md:text-3xl">فعالية رفع الشراع</h3>
-                <p class="text-base md:text-lg leading-relaxed mb-5 text-gray-200">
-                    يسرنا ويشرفنا استقبالكم لتدشين الفرح بمراسم رفع الشراع والبدء بأجواء المسرات.
-                </p>
-                <div class="text-lg md:text-xl font-bold text-[#c29d6d]">
-                    عصر يوم الخميس | الموافق 2026/10/22
+
+                <div class="w-16 h-16 border-2 border-gold-600/30 border-t-gold-600 rounded-full animate-spin mx-auto flex items-center justify-center mt-8">
+                    <i class="fa-solid fa-chevron-down text-gold-600 animate-bounce"></i>
+                </div>
+                <p class="text-xs text-navy-600 font-semibold animate-pulse">انزل لأسفل لتفاصيل ليلة العمر</p>
+            </div>
+        </section>
+
+        <!-- Live Countdown Timer -->
+        <section class="bg-navy-700 py-12 px-4 text-center text-white relative overflow-hidden">
+            <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-navy-600 via-navy-800 to-navy-900 opacity-60"></div>
+            
+            <div class="relative z-10 max-w-3xl mx-auto">
+                <h3 class="text-gold-500 font-amiri text-2xl md:text-3xl mb-8">الوقت المتبقي على الليلة المنتظرة</h3>
+                <div class="grid grid-cols-4 gap-2 md:gap-6 max-w-md mx-auto">
+                    <!-- Days -->
+                    <div class="bg-navy-900/80 p-3 md:p-5 rounded-2xl border border-gold-600/40">
+                        <span id="daysVal" class="block font-bold text-2xl md:text-4xl text-gold-500 font-mono">00</span>
+                        <span class="text-[10px] md:text-xs text-navy-100 font-bold uppercase tracking-widest">يوم</span>
+                    </div>
+                    <!-- Hours -->
+                    <div class="bg-navy-900/80 p-3 md:p-5 rounded-2xl border border-gold-600/40">
+                        <span id="hoursVal" class="block font-bold text-2xl md:text-4xl text-gold-500 font-mono">00</span>
+                        <span class="text-[10px] md:text-xs text-navy-100 font-bold uppercase tracking-widest">ساعة</span>
+                    </div>
+                    <!-- Minutes -->
+                    <div class="bg-navy-900/80 p-3 md:p-5 rounded-2xl border border-gold-600/40">
+                        <span id="minutesVal" class="block font-bold text-2xl md:text-4xl text-gold-500 font-mono">00</span>
+                        <span class="text-[10px] md:text-xs text-navy-100 font-bold uppercase tracking-widest">دقيقة</span>
+                    </div>
+                    <!-- Seconds -->
+                    <div class="bg-navy-900/80 p-3 md:p-5 rounded-2xl border border-gold-600/40">
+                        <span id="secondsVal" class="block font-bold text-2xl md:text-4xl text-gold-500 font-mono">00</span>
+                        <span class="text-[10px] md:text-xs text-navy-100 font-bold uppercase tracking-widest">ثانية</span>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- 6. قسم عقد القران (بتصميم الكتاب الفني) -->
-    <section class="marriage-section reveal">
-        <h2 class="text-[#1c4b72] mb-10 text-2xl md:text-3xl font-extrabold">مراسم عقد القران الميمون</h2>
-        <div class="marriage-book">
-            <div class="book-columns">
-                <div class="book-column">
-                    <i class="fa-solid fa-book-open text-5xl text-[#c29d6d] mb-5"></i>
-                    <h3 class="text-[#1c4b72] text-xl font-bold mb-4">الميثاق الغليظ</h3>
-                    <p class="text-gray-700 leading-relaxed text-sm md:text-base">
-                        عقد القران ومراسم الزواج بحضور الأهل والأحباب لتفيض القلوب بالبركة والمحبة الطاهرة في رحاب المسجد الأثري.
-                    </p>
-                </div>
-                <div class="book-column">
-                    <i class="fa-solid fa-mosque text-5xl text-[#c29d6d] mb-5"></i>
-                    <h3 class="text-[#1c4b72] text-xl font-bold mb-4">الزمان والمكان</h3>
-                    <p class="text-gray-700 leading-relaxed text-sm md:text-base font-bold">
-                        عصر يوم الجمعة المباركة<br>
-                        الموافق 2026/10/23<br>
-                        <span class="text-[#c29d6d]">في جامع يعقوب الحمد</span>
-                    </p>
+        <!-- Interactive Section 1: "رفع الشراع" (The Split Curtain Effect) -->
+        <section id="sailSection" class="relative py-24 bg-cream overflow-hidden">
+            
+            <!-- Left & Right Split Curtain Overlay Panels -->
+            <div id="leftCurtain" class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-navy-800 to-navy-700 border-l border-gold-500/40 z-30 curtain-panel flex items-center justify-end">
+                <div class="text-white text-center p-4 transform translate-x-4 md:translate-x-8">
+                    <span class="text-gold-500 font-amiri text-2xl md:text-4xl">رفع</span>
+                    <div class="w-12 h-0.5 bg-gold-600 mx-auto my-2"></div>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- 7. فعاليات ومراسم الضيافة (تم إلغاء مأدبة الغداء والاقتصار على الصبحة) -->
-    <section class="other-events-section reveal py-16 px-5 bg-white text-center">
-        <h2 class="text-[#1c4b72] text-3xl font-extrabold mb-10">فعاليات ومراسم الضيافة</h2>
-        <div class="max-w-xl mx-auto">
-            <div class="event-tile bg-[#faf8f2] rounded-2xl p-8 border-t-8 border-[#1c4b72] shadow-md transition-transform duration-300 hover:-translate-y-2">
-                <i class="fa-solid fa-mug-hot text-5xl text-[#c29d6d] mb-4"></i>
-                <h3 class="text-[#1c4b72] text-2xl font-bold mb-3">الصبحة والخواد</h3>
-                <p class="text-gray-700 leading-relaxed text-base mb-4">مشاركة العريس بهجة صباحية زفافه وتقديم التهاني والتقاليد العبقة للأهل والضيوف في الشحر.</p>
-                <strong class="text-[#c29d6d] text-lg">عصر يوم السبت 2026/10/24</strong>
+            <div id="rightCurtain" class="absolute top-0 left-0 w-1/2 h-full bg-gradient-to-r from-navy-800 to-navy-700 border-r border-gold-500/40 z-30 curtain-panel flex items-center justify-start">
+                <div class="text-white text-center p-4 transform -translate-x-4 md:-translate-x-8">
+                    <span class="text-gold-500 font-amiri text-2xl md:text-4xl">الشراع</span>
+                    <div class="w-12 h-0.5 bg-gold-600 mx-auto my-2"></div>
+                </div>
             </div>
-        </div>
-    </section>
 
-    <!-- 8. الخريطة التفاعلية الحية وموقع المسجد والبيت -->
-    <section class="map-section reveal py-16 px-5 bg-[#faf8f2] text-center">
-        <h2 class="text-[#1c4b72] text-2xl md:text-3xl font-bold">خريطة موقع الفرح وجامع يعقوب الحمد</h2>
-        <p class="mt-3 text-gray-600 max-w-lg mx-auto">اضغط للتفاعل والوصول إلى المواقع المحددة بدقة في مدينة الشحر بحضرموت بكل سهولة.</p>
-        
-        <div class="max-w-5xl mx-auto mt-10 bg-white rounded-3xl border-4 border-[#c29d6d] shadow-2xl overflow-hidden">
-            <div id="wedding-map" class="w-full h-[400px] md:h-[480px] z-10"></div>
-            <div class="map-info p-6 bg-[#1c4b72] text-white">
-                <h3 class="text-[#c29d6d] text-2xl font-bold">بيتنا الكائن في الشحر</h3>
-                <p class="mt-2 text-slate-200">المنصورة الجديدة، حارة الحبيب والإحسان - الشحر، حضرموت، اليمن</p>
-                <div class="flex flex-col sm:flex-row justify-center gap-4 mt-6">
-                    <a href="https://maps.google.com/?q=14.761110,49.583006" target="_blank" class="inline-block bg-[#c29d6d] text-[#1c4b72] font-bold py-3 px-6 rounded-full hover:bg-white hover:text-[#1c4b72] transition shadow-lg">
-                        <i class="fa-solid fa-house-chimney"></i> موقع البيت بالخرائط
-                    </a>
-                    <a href="https://maps.google.com/?q=14.765376,49.586141" target="_blank" class="inline-block bg-[#faf8f2] text-[#1c4b72] font-bold py-3 px-6 rounded-full hover:bg-[#c29d6d] hover:text-white transition shadow-lg">
-                        <i class="fa-solid fa-mosque"></i> موقع المسجد بالخرائط
+            <!-- Revealable Card Behind the Curtains -->
+            <div class="max-w-xl mx-auto px-6 text-center z-20 relative">
+                <div class="bg-white p-8 md:p-12 rounded-3xl border-2 border-gold-600 shadow-2xl space-y-6">
+                    <div class="w-16 h-16 bg-gold-100 rounded-full flex items-center justify-center mx-auto text-gold-700 text-3xl">
+                        <i class="fa-solid fa-tent-arrow-turn-left"></i>
+                    </div>
+                    
+                    <h3 class="text-3xl font-amiri font-bold text-navy-700">مراسم رفع الشراع</h3>
+                    <p class="text-navy-600 leading-relaxed">بكل فخر ومحبة نعلن بدء مراسم زفاف العريس المحبوب محمد مراد وندعوكم لحضور الليلة الاستفتاحية لرفع الشراع ببيت العريس العامر.</p>
+                    
+                    <div class="bg-gold-50 p-4 rounded-2xl border border-gold-200">
+                        <p class="text-gold-700 font-bold text-xl mb-1">عصر يوم الخميس</p>
+                        <p class="text-navy-700 text-sm font-semibold">الموافق: 22 / 10 / 2026 م</p>
+                    </div>
+
+                    <a href="#houseMapSection" class="inline-block px-6 py-2 bg-navy-700 hover:bg-navy-800 text-white font-bold rounded-full transition-all duration-300 shadow-md text-xs">
+                        <i class="fa-solid fa-map-location-dot ml-1"></i> تتبع اتجاه بيت آل الحو بالخريطة بالأسفل
                     </a>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- 9. جدار التهاني السحابي وإرسال الرسائل الفوري للواتساب -->
-    <section class="guestbook-section reveal py-16 px-5 bg-white text-center">
-        <h2 class="text-[#1c4b72] text-2xl md:text-3xl font-extrabold mb-3">تهاني وتبريكات الضيوف والأحباب</h2>
-        <p class="mb-8 text-gray-600 max-w-lg mx-auto">اكتب مباركتك للعريس لتنشر فوراً على جدار الفرح وتصل مباشرة لهاتف العريس عبر الواتساب!</p>
-        
-        <div class="max-w-xl mx-auto bg-[#faf8f2] p-6 md:p-10 rounded-3xl border border-[#c29d6d]/40 shadow-xl">
-            <!-- أداة صياغة التهاني بالذكاء الاصطناعي -->
-            <div class="bg-[#f0f4f8] border border-dashed border-[#c29d6d] rounded-2xl p-5 mb-6 text-right">
-                <div class="flex items-center gap-2 mb-3">
-                    <i class="fa-solid fa-wand-magic-sparkles text-[#c29d6d]"></i>
-                    <span class="text-[#1c4b72] font-bold text-sm">هل تبحث عن الكلمات المناسبة؟ دع الذكاء الاصطناعي يصيغها لك!</span>
+        <!-- Interactive Section 2: "عقد القران" (The Holy Marriage Contract Card) -->
+        <section class="py-24 bg-gold-100/40 relative border-y border-gold-200">
+            <div class="max-w-4xl mx-auto px-6 grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+                
+                <div class="md:col-span-6 space-y-6 text-center md:text-right">
+                    <div class="w-14 h-14 bg-navy-700 text-gold-500 rounded-full flex items-center justify-center text-2xl mx-auto md:mx-0 shadow-lg">
+                        <i class="fa-solid fa-book-open-reader"></i>
+                    </div>
+                    <span class="text-xs font-bold text-gold-700 uppercase tracking-widest">الميثاق الغليظ</span>
+                    <h3 class="font-amiri text-4xl font-bold text-navy-700 leading-tight">عقد القران والرباط المقدس</h3>
+                    <p class="text-navy-600 leading-relaxed text-sm md:text-base">بمباركة ربانية كريمة، يتم توثيق عقد قران ابننا الحبيب محمد مراد في جامع يعقوب الحمد في مدينة الشحر، بحضور كوكبة من الأهل والمحبين.</p>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-white p-4 rounded-2xl border border-gold-200 shadow-sm text-center">
+                            <span class="block text-gold-700 font-bold text-base md:text-lg">عصر يوم الجمعة</span>
+                            <span class="text-navy-600 text-[11px] font-semibold">23 / 10 / 2026 م</span>
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl border border-gold-200 shadow-sm text-center">
+                            <span class="block text-navy-700 font-bold text-base md:text-lg">جامع يعقوب الحمد</span>
+                            <span class="text-navy-600 text-[11px] font-semibold">الشحر، حضرموت</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label for="guestRelation" class="block text-xs font-bold text-[#2c6394] mb-1">صلة قرابتك بالعريس (مثلاً: صديق، خال، ابن عم..)</label>
-                    <input type="text" id="guestRelation" class="w-full p-2 border border-blue-200/50 rounded-lg bg-white text-sm outline-none focus:border-[#c29d6d]" placeholder="مثال: زميل العريس، جار، إلخ">
+
+                <!-- OpenStreetMap for Mosque Location Integration -->
+                <div class="md:col-span-6">
+                    <div class="bg-white p-4 rounded-3xl border border-gold-600 shadow-xl space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-navy-700"><i class="fa-solid fa-mosque ml-1 text-gold-600"></i> جامع يعقوب الحمد</span>
+                            <a href="https://maps.google.com/?q=14.765376,49.586141" target="_blank" class="text-xs text-gold-700 hover:underline font-bold">
+                                <i class="fa-solid fa-location-arrow"></i> فتح بخرائط جوجل
+                            </a>
+                        </div>
+                        <!-- Live Map Embed for Mosque -->
+                        <div id="mosqueMap" class="h-64 w-full custom-map z-10"></div>
+                        <p class="text-[11px] text-navy-600 text-center font-bold"><i class="fa-solid fa-circle-info text-gold-600 ml-1"></i> الإحداثيات: QH8P+694, Ash Shihr, Yemen</p>
+                    </div>
                 </div>
-                <button type="button" class="bg-[#c29d6d] text-[#1c4b72] font-bold px-4 py-2 rounded-lg text-sm transition hover:bg-[#1c4b72] hover:text-white" id="generateAiWishBtn" onclick="generateWishWithAI()">
-                    <i class="fa-solid fa-magic"></i> توليد تهنئة بليغة فوراً
-                </button>
+
             </div>
+        </section>
 
-            <form id="wishForm" onsubmit="submitWish(event)" class="text-right">
-                <div class="mb-5">
-                    <label for="guestName" class="block mb-2 font-bold text-[#1c4b72]">اسمك الكريم</label>
-                    <input type="text" id="guestName" class="w-full p-3 border border-slate-200 rounded-xl bg-white outline-none focus:border-[#c29d6d]" placeholder="اكتب اسمك هنا" required>
+        <!-- Interactive Section 3: "الصبحة والخواد" (The Saturday Incense Ceremony) -->
+        <section class="py-24 bg-cream relative">
+            <div class="max-w-xl mx-auto px-6 text-center space-y-8">
+                <div class="inline-block relative">
+                    <!-- Traditional incense burner icon animation -->
+                    <div class="w-20 h-20 bg-gradient-to-tr from-gold-600 to-gold-500 rounded-full flex items-center justify-center text-white text-4xl shadow-xl hover:scale-105 transition-all duration-300">
+                        <i class="fa-solid fa-smog animate-pulse"></i>
+                    </div>
                 </div>
-                <div class="mb-5">
-                    <label for="guestMessage" class="block mb-2 font-bold text-[#1c4b72]">المباركة أو التهنئة</label>
-                    <textarea id="guestMessage" class="w-full p-3 border border-slate-200 rounded-xl bg-white outline-none focus:border-[#c29d6d]" rows="4" placeholder="اكتب تبريكاتك للعريس ومحبته بالقلب" required></textarea>
+
+                <div class="space-y-4">
+                    <span class="text-xs font-bold text-gold-700 uppercase tracking-widest">تتويج المسرات والأفراح</span>
+                    <h3 class="font-amiri text-4xl font-bold text-navy-700">الصبحة والخواد</h3>
+                    <p class="text-navy-600 leading-relaxed max-w-md mx-auto">
+                        تتويجاً لأفراحنا السعيدة واكتمال البهجة والسرور، يستقبل العريس محمد وأسرته الكرام المهنئين لفعالية الصبحة والخواد ببيت العريس العامر بالمنصورة الجديدة.
+                    </p>
                 </div>
-                <button type="submit" class="w-full py-4 bg-[#1c4b72] text-white font-bold rounded-xl text-lg hover:bg-[#2c6394] transition shadow-lg" id="submitWishBtn">
-                    <i class="fa-brands fa-whatsapp ml-1"></i> إرسال التهنئة ومشاركتها بالواتساب
-                </button>
-            </form>
+
+                <div class="bg-navy-700 p-8 rounded-3xl border border-gold-600 shadow-2xl text-white max-w-sm mx-auto space-y-4">
+                    <p class="text-gold-500 font-amiri text-2xl font-bold">عصر يوم السبت</p>
+                    <div class="w-12 h-px bg-gold-600 mx-auto"></div>
+                    <p class="text-base">الموافق: 24 / 10 / 2026 م</p>
+                    <p class="text-xs text-navy-200 tracking-wider font-light">مرحبـاً بكم ترحيباً يروق بحضوركم البهي</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Location 4: "موقع البيت" (Groom's House Map Integration) -->
+        <section id="houseMapSection" class="py-24 bg-gold-100/30 relative border-t border-gold-200">
+            <div class="max-w-4xl mx-auto px-6 grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
+                
+                <!-- Map Left Side Column -->
+                <div class="md:col-span-6">
+                    <div class="bg-white p-5 rounded-3xl border border-gold-600 shadow-2xl space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-bold text-navy-700"><i class="fa-solid fa-house-chimney-window ml-1 text-gold-600"></i> بيت العريس (آل الحو)</span>
+                            <a href="https://maps.google.com/?q=14.761110,49.583006" target="_blank" class="text-xs text-gold-700 hover:underline font-bold">
+                                <i class="fa-solid fa-location-arrow"></i> فتح بخرائط جوجل
+                            </a>
+                        </div>
+                        <!-- Live Map Embed for House -->
+                        <div id="houseMap" class="h-64 w-full custom-map z-10"></div>
+                        <p class="text-[11px] text-navy-600 text-center font-semibold"><i class="fa-solid fa-location-pin text-gold-600 ml-1"></i> الشحر، المنصورة الجديدة - حارة الحبيب والإحسان</p>
+                    </div>
+                </div>
+
+                <!-- Text Right Side Column -->
+                <div class="md:col-span-6 space-y-6 text-center md:text-right">
+                    <div class="w-14 h-14 bg-navy-700 text-gold-500 rounded-full flex items-center justify-center text-2xl mx-auto md:mx-0 shadow-lg">
+                        <i class="fa-solid fa-location-crosshairs"></i>
+                    </div>
+                    <h3 class="font-amiri text-4xl font-bold text-navy-700">موقع الفعالية والبيت</h3>
+                    <p class="text-navy-600 leading-relaxed">
+                        سهلنا لكم الوصول إلى موقع الحفل عبر تفعيل هذه الخريطة المباشرة. تفضلوا بزيارتنا في بيتنا الكائن في المنصورة الجديدة - حارة الحبيب والإحسان. حياكم الله جميعاً!
+                    </p>
+                    
+                    <div class="bg-white p-6 rounded-2xl border border-gold-200 shadow-sm space-y-2">
+                        <h4 class="font-bold text-navy-700 text-sm"><i class="fa-solid fa-circle-exclamation text-gold-600 ml-1"></i> إرشادات سريعة للضيوف:</h4>
+                        <ul class="text-xs text-navy-600 space-y-1.5 list-disc list-inside">
+                            <li>يمكنك تحريك الخريطة التفاعلية وتكبيرها وتصغيرها بأصابعك.</li>
+                            <li>اضغط على زر الخرائط لفتح توجيه GPS حقيقي للملاحة بالسيارة.</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Interactive Wishes Wall with Instant Local / Cloud Sync and WhatsApp Integration -->
+        <section class="py-24 bg-cream relative">
+            <div class="max-w-3xl mx-auto px-6 space-y-12">
+                <div class="text-center space-y-4">
+                    <div class="w-14 h-14 bg-gold-600 text-white rounded-full flex items-center justify-center text-2xl mx-auto shadow-md">
+                        <i class="fa-solid fa-pen-fancy"></i>
+                    </div>
+                    <h3 class="font-amiri text-4xl font-bold text-navy-700">دفتر تهاني الضيوف والزوار</h3>
+                    <p class="text-navy-600 text-sm md:text-base max-w-lg mx-auto">
+                        اكتب تبريكاتك للعريس الغالي محمد مراد آل الحو وعائلته الكرام لتظهر على جدار التهنئة مباشرة ويتم إرسالها فوراً برقم الواتساب الخاص بنا.
+                    </p>
+                </div>
+
+                <!-- Input Wishes Form -->
+                <div class="bg-white p-6 md:p-8 rounded-3xl border border-gold-600 shadow-2xl">
+                    <form id="wishForm" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-navy-700 mb-1" for="guestName">اسمك الكريم:</label>
+                                <input type="text" id="guestName" required placeholder="أدخل اسمك بالكامل" class="w-full px-4 py-2 text-sm rounded-lg border border-gold-200 focus:outline-none focus:border-gold-500 bg-gold-100/10">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-navy-700 mb-1" for="guestRelation">صلة القرابة (اختياري):</label>
+                                <input type="text" id="guestRelation" placeholder="صديق، قريب، محب..." class="w-full px-4 py-2 text-sm rounded-lg border border-gold-200 focus:outline-none focus:border-gold-500 bg-gold-100/10">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-navy-700 mb-1" for="guestMessage">رسالة التهنئة:</label>
+                            <textarea id="guestMessage" rows="3" required placeholder="بارك للعروسين وعائلة آل الحو..." class="w-full px-4 py-2 text-sm rounded-lg border border-gold-200 focus:outline-none focus:border-gold-500 bg-gold-100/10"></textarea>
+                        </div>
+                        
+                        <div class="flex items-center justify-between pt-2">
+                            <span class="text-xs text-navy-600 font-semibold"><i class="fa-solid fa-circle-nodes text-gold-600 ml-1"></i> سيتم توجيهكم تلقائياً لتطبيق الواتساب لمشاركتها</span>
+                            <button type="submit" id="submitWishBtn" class="px-6 py-2 bg-navy-700 hover:bg-navy-800 text-white font-bold rounded-lg transition-all duration-300 text-xs shadow-md">
+                                <i class="fa-brands fa-whatsapp ml-1"></i> إرسال ومشاركة بالواتساب
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Live Wish Display Wall -->
+                <div class="space-y-4">
+                    <h4 class="font-amiri text-2xl font-bold text-navy-700 border-b border-gold-200 pb-2 flex items-center justify-between">
+                        <span>جدار المباركات الحي والمباشر</span>
+                        <span class="text-xs text-navy-600 font-light" id="wishCounter">0 تبريكة</span>
+                    </h4>
+                    <div id="wishesWall" class="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+                        <!-- Loading placeholder wishes inside -->
+                        <div class="text-center py-8 text-navy-600 text-sm">
+                            <i class="fa-solid fa-spinner animate-spin text-xl text-gold-600 mb-2"></i>
+                            <p>جاري جلب التبريكات السحابية ومشاركتها...</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Interactive Beautiful Modal Notifications System (Replaces ugly browser alerts) -->
+        <div id="toastNotification" class="fixed bottom-6 left-6 z-50 bg-navy-800 text-white p-4 rounded-2xl border border-gold-600 shadow-2xl flex items-center space-x-3 space-x-reverse transform translate-y-24 opacity-0 transition-all duration-500 max-w-sm">
+            <div class="w-10 h-10 bg-gold-600 rounded-full flex items-center justify-center text-xl text-white">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-gold-500">تمت العملية بنجاح</p>
+                <p class="text-[11px] text-navy-100 mt-0.5" id="toastMessage">تم إرسال تبريكتكم ومشاركتها بالواتساب بنجاح!</p>
+            </div>
+            <button onclick="hideToast()" class="text-white hover:text-gold-600 text-xs font-bold p-1"><i class="fa-solid fa-xmark"></i></button>
         </div>
 
-        <div class="wishes-wall mt-12 max-w-4xl mx-auto max-h-[500px] overflow-y-auto flex flex-col gap-5 p-2" id="wishesWall">
-            <!-- سيتم تحميل التهاني سحابياً هنا -->
-        </div>
-    </section>
+        <!-- Footnote section -->
+        <footer class="bg-navy-900 py-12 px-4 text-center text-white border-t border-gold-600/40">
+            <div class="max-w-md mx-auto space-y-4">
+                <h3 class="font-amiri text-2xl text-gold-500 font-bold">عائلة آل الحو</h3>
+                <p class="text-xs tracking-wider text-navy-200 leading-loose">حضوركم يشرفنا ويزيد من بهجتنا وسرورنا. دامت دياركم عامرة بالخير والأفراح والمسرات.</p>
+                <div class="w-12 h-px bg-gold-600 mx-auto my-4"></div>
+                <p class="text-[10px] text-navy-400 font-bold">تم التصميم والتطوير بكل حب بمناسبة زفاف محمد مراد آل الحو 2026 م</p>
+            </div>
+        </footer>
 
-    <!-- التذييل الفخم والنهائي -->
-    <footer class="bg-[#1c4b72] text-white py-12 px-5 text-center border-t-4 border-[#c29d6d]">
-        <p class="font-serif text-2xl text-[#c29d6d]">دامت دياركم عامرة بالأفراح والمسرات</p>
-        <p class="mt-3 text-slate-300 max-w-md mx-auto">حضوركم يزيد أفراحنا بهجة، ويشرفنا مشاركتكم هذه المناسبة السعيدة</p>
-        <p class="font-bold mt-6 text-[#c29d6d] text-lg">آل الحو</p>
-    </footer>
+    </div>
 
     <script>
-        const apiKey = ""; // سيتم تفعيلها تلقائياً عند التشغيل بواسطة Canvas
-        const DB_KEY = 'alhaw_wedding_wishes_2026_v3';
-        const DB_URL_GET = `https://api.keyval.org/get/${DB_KEY}`;
-        const DB_URL_SET = `https://api.keyval.org/set/${DB_KEY}/`;
-        
-        let wishes = [
-            { name: "آل الحو الكرام", relation: "الأهل", text: "ألف مبروك للعريس الغالي محمد بن مراد، ونسأل الله أن يبارك لهما ويبارك عليهما ويجمع بينهما في خير ومحبة.", reply: "بارك الله فيكم يا آل الحو الكرام ولا حرمنا الله من ودكم وجميل حضوركم في الشحر حضرموت." }
-        ];
+        // Check if device is mobile to disable heavy falling leaves and improve memory
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-        // دالة لعرض الإشعارات الفخمة بدلاً من alert المزعج
-        function showToast(message) {
-            const toast = document.getElementById('custom-toast');
-            const toastMsg = document.getElementById('toast-message');
-            toastMsg.innerText = message;
-            toast.classList.remove('opacity-0', 'pointer-events-none');
-            toast.classList.add('opacity-100');
-            setTimeout(() => {
-                toast.classList.remove('opacity-100');
-                toast.classList.add('opacity-0', 'pointer-events-none');
-            }, 5000);
-        }
+        // Core Element Variables
+        const envelopeOverlay = document.getElementById('envelopeOverlay');
+        const mainContainer = document.getElementById('mainContainer');
+        const waxSealBtn = document.getElementById('waxSealBtn');
+        const zaffaAudio = document.getElementById('zaffaAudio');
+        const togglePlayBtn = document.getElementById('togglePlayBtn');
+        const audioPlayer = document.getElementById('audioPlayer');
+        const audioIcon = document.getElementById('audioIcon');
+        const progressBar = document.getElementById('progressBar');
 
-        const audio = document.getElementById('weddingMusic');
-        audio.volume = 0.25; // تعيين الصوت بشكل منخفض ليكون مريحاً
-        const musicBtn = document.getElementById('musicBtn');
-        let isPlaying = false;
-
-        // 1. فتح مغلف الدعوة الرقمية الفاخرة
-        function openInvitation() {
-            // تشغيل الصوت فوراً استجابة لنقرة المستخدم لتخطي جدران حماية الهواتف المحمولة
-            try {
-                audio.play().then(() => {
-                    isPlaying = true;
-                    musicBtn.classList.add('playing');
-                    musicBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
-                }).catch(err => {
-                    console.log("الصوت بانتظار تفاعل المستخدم لبدء الزفة:", err);
-                });
-            } catch(e) {
-                console.log("Audio play caught directly");
+        // Falling Golden Leaves Generator for Desktops
+        const leafContainer = document.getElementById('leafContainer');
+        if (!isMobile) {
+            const leafCount = 18;
+            for (let i = 0; i < leafCount; i++) {
+                const leaf = document.createElement('div');
+                leaf.className = 'leaf';
+                leaf.style.left = Math.random() * 100 + '%';
+                leaf.style.top = Math.random() * -100 + 'px';
+                leaf.style.transform = `rotate(${Math.random() * 360}deg)`;
+                
+                // Random scale and animation timings
+                const size = Math.random() * 15 + 10;
+                leaf.style.width = size + 'px';
+                leaf.style.height = size + 'px';
+                
+                const duration = Math.random() * 12 + 8;
+                const delay = Math.random() * -15;
+                leaf.style.animation = `fall ${duration}s linear infinite`;
+                leaf.style.animationDelay = delay + 's';
+                
+                leafContainer.appendChild(leaf);
             }
 
-            document.getElementById('flap').style.transform = 'rotateX(180deg)';
-            setTimeout(() => {
-                document.body.classList.add('unlocked');
-            }, 400);
+            // Create CSS keyframe programmatically for clean animations
+            const style = document.createElement('style');
+            style.innerHTML = `
+                @keyframes fall {
+                    0% {
+                        transform: translateY(0) rotate(0deg) translateX(0);
+                        opacity: 0.75;
+                    }
+                    50% {
+                        transform: translateY(50vh) rotate(180deg) translateX(50px);
+                        opacity: 0.55;
+                    }
+                    100% {
+                        transform: translateY(110vh) rotate(360deg) translateX(-50px);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        } else {
+            // Mobile Optimization: static beautiful leaf decoration elements in corners instead of crash-heavy real time loops
+            leafContainer.innerHTML = '';
+            leafContainer.style.display = 'none';
         }
 
-        // التحكم في الموسيقى واللحن لزفاف هادئ بصوت زفة منخفض في الخلفية
-        function toggleMusic(forcePlay = false) {
-            if (forcePlay || !isPlaying) {
-                audio.play().then(() => {
-                    isPlaying = true;
-                    musicBtn.classList.add('playing');
-                    musicBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
-                }).catch(err => {
-                    console.log("الصوت بانتظار تفاعل المستخدم لبدء الزفة");
-                    document.addEventListener('click', () => {
-                        if(!isPlaying) {
-                            audio.play();
-                            isPlaying = true;
-                            musicBtn.classList.add('playing');
-                            musicBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
-                        }
-                    }, { once: true });
-                });
+        // Event listener for opening the luxury wax seal envelope
+        waxSealBtn.addEventListener('click', function() {
+            // 1. Play the premium islamic vocally-driven Zaffa background sound loop immediately to avoid Safari autoplay blocks
+            zaffaAudio.volume = 0.45; // Soft background volume
+            zaffaAudio.play().then(() => {
+                console.log("Audio started playing successfully.");
+                audioIcon.className = 'fa-solid fa-volume-high text-xl';
+            }).catch(e => {
+                console.warn("Audio autoplay blocked or waiting for gesture. Triggering backup interaction.", e);
+            });
+
+            // 2. Hide envelope with slick absolute sliding overlay animation
+            envelopeOverlay.style.transform = 'translateY(-110%) animate-fade';
+            setTimeout(() => {
+                envelopeOverlay.classList.add('hidden');
+            }, 1000);
+
+            // 3. Make main content visible and animate fading nicely
+            mainContainer.classList.remove('hidden');
+            setTimeout(() => {
+                mainContainer.style.opacity = '1';
+                audioPlayer.classList.remove('hidden');
+                
+                // Initialize maps safely only after making containers visible to calculate dimensions properly
+                initMaps();
+            }, 50);
+        });
+
+        // Toggle Audio Playback Control Listener
+        togglePlayBtn.addEventListener('click', function() {
+            if (zaffaAudio.paused) {
+                zaffaAudio.play();
+                audioIcon.className = 'fa-solid fa-volume-high text-xl animate-pulse';
+                showToast("تم تشغيل زفة آل الحو العطرة بصوت هادئ");
             } else {
-                audio.pause();
-                isPlaying = false;
-                musicBtn.classList.remove('playing');
-                musicBtn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
+                zaffaAudio.pause();
+                audioIcon.className = 'fa-solid fa-volume-xmark text-xl';
+                showToast("تم إيقاف تشغيل الزفة مؤقتاً");
             }
-        }
+        });
 
-        // توليد بتلات الورد الذهبي
-        function createPetals() {
-            const container = document.getElementById('petals');
-            const isMobile = window.innerWidth < 768;
+        // Target Date Countdown (22nd October 2026 - Thursday)
+        const targetDate = new Date("October 22, 2026 15:30:00").getTime();
 
-            if (isMobile) {
-                // للجوال: تثبيت الأوراق في الأعلى لتجنب حدوث بطء في الأداء
-                container.innerHTML = `
-                    <div class="petal" style="top: 15px; left: 15px; transform: rotate(15deg) scale(1.2);"></div>
-                    <div class="petal" style="top: 25px; left: 45px; transform: rotate(45deg);"></div>
-                    <div class="petal" style="top: 15px; right: 15px; transform: rotate(-15deg) scale(1.2);"></div>
-                    <div class="petal" style="top: 25px; right: 45px; transform: rotate(-45deg);"></div>
-                `;
+        const countdownInterval = setInterval(function() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance < 0) {
+                clearInterval(countdownInterval);
+                document.getElementById("daysVal").innerText = "00";
+                document.getElementById("hoursVal").innerText = "00";
+                document.getElementById("minutesVal").innerText = "00";
+                document.getElementById("secondsVal").innerText = "00";
                 return;
             }
 
-            // للكمبيوتر واللابتوب: تتساقط أوراق الورد بكامل عذوبتها وتفاعليتها
-            for (let i = 0; i < 30; i++) {
-                const petal = document.createElement('div');
-                petal.classList.add('petal');
-                petal.style.left = Math.random() * 100 + 'vw';
-                petal.style.width = Math.random() * 15 + 10 + 'px';
-                petal.style.height = petal.style.width;
-                petal.style.animationDuration = Math.random() * 5 + 4 + 's';
-                petal.style.animationDelay = Math.random() * 5 + 's';
-                container.appendChild(petal);
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("daysVal").innerText = String(days).padStart(2, '0');
+            document.getElementById("hoursVal").innerText = String(hours).padStart(2, '0');
+            document.getElementById("minutesVal").innerText = String(minutes).padStart(2, '0');
+            document.getElementById("secondsVal").innerText = String(seconds).padStart(2, '0');
+        }, 1000);
+
+        // Split Curtain on Scroll Action
+        const leftCurtain = document.getElementById('leftCurtain');
+        const rightCurtain = document.getElementById('rightCurtain');
+        const sailSection = document.getElementById('sailSection');
+
+        window.addEventListener('scroll', function() {
+            const windowHeight = window.innerHeight;
+            const scrollY = window.scrollY;
+
+            // Update Progress Bar
+            const docHeight = document.documentElement.scrollHeight - windowHeight;
+            const scrolled = (scrollY / docHeight) * 100;
+            progressBar.style.width = scrolled + '%';
+
+            // 1. Split Curtain Intersection Logic
+            const rect = sailSection.getBoundingClientRect();
+            const sectionTop = rect.top;
+            const sectionHeight = rect.height;
+
+            if (sectionTop < windowHeight && sectionTop > -sectionHeight) {
+                // Calculate percentage of scroll inside section
+                const totalProgress = windowHeight + sectionHeight;
+                const progress = ((windowHeight - sectionTop) / totalProgress) * 150; // multiply to make split faster
+                const splitPercent = Math.min(Math.max(progress, 0), 100);
+                
+                leftCurtain.style.transform = `translateX(${splitPercent}%)`;
+                rightCurtain.style.transform = `translateX(-${splitPercent}%)`;
             }
-        }
-        createPetals();
 
-        // تفعيل كشف الشراع
-        function openSail() {
-            document.getElementById('sail-section').classList.add('opened');
-        }
-
-        // ظهور الأبيات الشعرية العائمة تباعاً عند النزول بالصفحة
-        window.addEventListener('scroll', () => {
-            const lines = document.querySelectorAll('.poetry-line');
-            lines.forEach((line, index) => {
-                const rect = line.getBoundingClientRect();
-                if (rect.top < window.innerHeight - 80) {
-                    setTimeout(() => {
-                        line.classList.add('visible');
-                    }, index * 100); 
-                }
-            });
-
-            const reveals = document.querySelectorAll('.reveal');
-            reveals.forEach(reveal => {
-                const windowHeight = window.innerHeight;
-                const revealTop = reveal.getBoundingClientRect().top;
-                const revealPoint = 150;
-
-                if (revealTop < windowHeight - revealPoint) {
-                    reveal.classList.add('active');
+            // 2. Fade in poetry boxes elegantly
+            const poetryBoxes = document.querySelectorAll('.poetry-box');
+            poetryBoxes.forEach((box, index) => {
+                const boxTop = box.getBoundingClientRect().top;
+                if (boxTop < windowHeight * 0.85) {
+                    box.classList.remove('opacity-0', 'translate-y-8');
+                    box.classList.add('opacity-100', 'translate-y-0');
                 }
             });
         });
 
-        // عداد تنازلي دقيق حتى موعد الفرح المنتظر (22 أكتوبر 2026)
-        const targetDate = new Date("October 22, 2026 16:00:00").getTime();
-
-        const countdownInterval = setInterval(() => {
-            const now = new Date().getTime();
-            const difference = targetDate - now;
-
-            const d = Math.floor(difference / (1000 * 60 * 60 * 24));
-            const h = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const m = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-            const s = Math.floor((difference % (1000 * 60)) / 1000);
-
-            document.getElementById("days").innerText = d < 10 ? "0" + d : d;
-            document.getElementById("hours").innerText = h < 10 ? "0" + h : h;
-            document.getElementById("minutes").innerText = m < 10 ? "0" + m : m;
-            document.getElementById("seconds").innerText = s < 10 ? "0" + s : s;
-
-            if (difference < 0) {
-                clearInterval(countdownInterval);
-                document.querySelector(".countdown-title").innerText = "دامت الأفراح والمحبة بقلوبكم!";
-            }
-        }, 1000);
-
-        // حماية كود الخريطة لمنع انهيار الموقع على الجوال إذا تعذر تحميل Leaflet
-        if (typeof L !== 'undefined') {
+        // Custom Leaflet Maps Instantiation for Mosque and House
+        function initMaps() {
             try {
-                let map = L.map('wedding-map').setView([14.763243, 49.584573], 15); 
-                
+                // 1. Mosque Map Integration: 14.765376, 49.586141
+                const mLat = 14.765376;
+                const mLng = 49.586141;
+                const mosqueMap = L.map('mosqueMap', { zoomControl: false }).setView([mLat, mLng], 15);
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     attribution: '© OpenStreetMap contributors'
-                }).addTo(map);
+                }).addTo(mosqueMap);
+                
+                // Beautiful gold-colored standard leaf marker mapping
+                const mosqueMarker = L.marker([mLat, mLng]).addTo(mosqueMap)
+                    .bindPopup("<strong class='text-navy-700 font-bold'>جامع يعقوب الحمد (عقد القران)</strong>")
+                    .openPopup();
 
-                let mosqueIcon = L.divIcon({
-                    html: '<i class="fa-solid fa-mosque" style="color: #1c4b72; font-size: 2.2rem; filter: drop-shadow(0px 3px 5px rgba(0,0,0,0.3));"></i>',
-                    iconSize: [45, 45],
-                    className: 'custom-div-icon'
-                });
+                // 2. House Map Integration: 14.761110, 49.583006
+                const hLat = 14.761110;
+                const hLng = 49.583006;
+                const houseMap = L.map('houseMap', { zoomControl: false }).setView([hLat, hLng], 15);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap'
+                }).addTo(houseMap);
 
-                let homeIcon = L.divIcon({
-                    html: '<i class="fa-solid fa-house-chimney-window" style="color: #c29d6d; font-size: 2.2rem; filter: drop-shadow(0px 3px 5px rgba(0,0,0,0.3));"></i>',
-                    iconSize: [45, 45],
-                    className: 'custom-div-icon2'
-                });
+                const houseMarker = L.marker([hLat, hLng]).addTo(houseMap)
+                    .bindPopup("<strong class='text-navy-700 font-bold'>بيت آل الحو الكرام (رفع الشراع والصبحة)</strong>")
+                    .openPopup();
 
-                // البيت (14.761110, 49.583006)
-                L.marker([14.761110, 49.583006], {icon: homeIcon}).addTo(map)
-                    .bindPopup('<b>بيتنا الكائن في الشحر</b><br>حارة الحبيب والإحسان').openPopup();
+                // Responsive sizing on load
+                setTimeout(() => {
+                    mosqueMap.invalidateSize();
+                    houseMap.invalidateSize();
+                }, 500);
 
-                // المسجد (14.765376, 49.586141)
-                L.marker([14.765376, 49.586141], {icon: mosqueIcon}).addTo(map)
-                    .bindPopup('<b>جامع يعقوب الحمد</b><br>موقع عقد القران المبارك (عصر الجمعة)');
             } catch (err) {
-                console.warn("تعذر تشغيل الخريطة التفاعلية: ", err);
+                console.error("Leaflet Maps failed to initialize. Handled gracefully.", err);
             }
         }
 
-        async function callGemini(userQuery, systemPrompt) {
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
-            const payload = {
-                contents: [{ parts: [{ text: userQuery }] }],
-                systemInstruction: {
-                    parts: [{ text: systemPrompt }]
-                }
-            };
+        // Wishes Wall logic
+        const wishesWall = document.getElementById('wishesWall');
+        const wishForm = document.getElementById('wishForm');
+        const wishCounter = document.getElementById('wishCounter');
 
-            let delay = 1000;
-            for (let i = 0; i < 3; i++) {
-                try {
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    if (response.ok) {
-                        return await response.json();
-                    }
-                } catch (error) {
-                    if (i === 2) throw error;
-                }
-                await new Promise(resolve => setTimeout(resolve, delay));
-                delay *= 2;
-            }
-        }
+        // Backup database list
+        let wishes = [
+            { name: "آل الحو الكرام", relation: "الأهل", text: "نسأل الله العلي القدير أن يبارك للعريس الحبيب محمد بن مراد، وأن يجمع بينه وبين أهله على خير وبركة، دامت دياركم عامرة بالمسرات والأفراح!" },
+            { name: "الوالد مراد أحمد الحو", relation: "والد العريس", text: "ألف مبروك لقرّة عيني محمد، دامت ديارنا بالأفراح عامرة ومحروسة برعاية الله وحفظه، وعقبال إخوتك يمنةً ويسرة" },
+            { name: "الشيخ أحمد صالح الشحري", relation: "قريب ومحب", text: "أجمل التهاني والتبريكات للعريس محمد بن مراد بمناسبة الزفاف السعيد والميمون، بارك الله لكما وبارك عليكما وجمع بينكما في خير" }
+        ];
 
-        // صياغة تهنئة مخصصة بالذكاء الاصطناعي بناءً على علاقة القرابة
-        async function generateWishWithAI() {
-            const guestName = document.getElementById('guestName').value.trim();
-            const relation = document.getElementById('guestRelation').value.trim();
-            const generateBtn = document.getElementById('generateAiWishBtn');
-
-            if (!guestName) {
-                showToast("يرجى كتابة اسمك الكريم أولاً في حقل الاسم لتتم صياغة تهنئة تناسبك.");
-                return;
-            }
-
-            generateBtn.disabled = true;
-            generateBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري صياغة الكلمات الأدبية...';
-
-            const systemPrompt = "أنت كاتب ومصمم أدبي بليغ وخبير بالأدب والتقاليد الحضرمية واليمنية العبقة. صغ تهنئة زفاف فائقة الرقي والجمال والشاعرية موجهة للعريس محمد بن مراد وعائلته آل الحو بمناسبة الزفاف في مدينة الشحر. صغها بناءً على علاقة المهنئ المذكورة وقصرها لتكون بطول فقرة واحدة دافئة وصالحة للعرض على جدار زفاف عام ومباشر.";
-            const userPrompt = `اسم المهنئ: ${guestName}، علاقته بالعريس: ${relation || 'صديق ومهنئ مقرب'}. صغ تهنئة مخصصة معبرة جداً بدون أي موسيقى أو إشارة لها.`;
-
-            try {
-                const data = await callGemini(userPrompt, systemPrompt);
-                const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-                if (generatedText) {
-                    document.getElementById('guestMessage').value = generatedText.trim();
-                } else {
-                    showToast("لم نتمكن من الحصول على تهنئة، جرب صياغة تهنئتك الخاصة.");
-                }
-            } catch (err) {
-                console.error("Gemini Error:", err);
-                showToast("حدث خطأ أثناء التواصل مع خادم الذكاء الاصطناعي. جرب مجدداً.");
-            } finally {
-                generateBtn.disabled = false;
-                generateBtn.innerHTML = '<i class="fa-solid fa-magic"></i> توليد تهنئة بليغة فوراً';
-            }
-        }
-
-        // توليد رد شكر فوري وتلقائي من العريس محمد للضيف
-        async function generateGroomReply(guestName, guestMessage) {
-            const systemPrompt = "أنت العريس الشاب محمد بن مراد من آل الحو في مدينة الشحر بحضرموت. قم بصياغة رد شكر فوري فائق المحبة والتقدير والأدب لضيفك الذي أرسل لتوه مباركته على جدار التهاني. اجعل الرد شاعرياً، قصيراً (من 1 إلى 2 سطر)، ومناسباً بامتنان فخم يعكس ذوقك الرفيع وكرم آل الحو.";
-            const userPrompt = `الضيف العزيز: ${guestName}. أرسل التهنئة التالية: "${guestMessage}". رد عليه بلطف واشكر حضوره المحتمل ومباركته الغالية.`;
-
-            try {
-                const data = await callGemini(userPrompt, systemPrompt);
-                return data.candidates?.[0]?.content?.parts?.[0]?.text || "شكراً جزيلاً لتهنئتك الكريمة ولتمنياتك الطيبة التي تسعد قلبي في الشحر الغالية. دمت في صحة ومسرات!";
-            } catch (err) {
-                console.error("Reply Error:", err);
-                return "شكراً جزيلاً لتهنئتك الكريمة ولتمنياتك الطيبة التي تسعد قلبي. دمت في صحة ومسرات!";
-            }
-        }
-
-        // وظائف تحميل وحفظ التبريكات سحابياً عبر KeyVal.org
-        async function loadWishes() {
-            try {
-                const response = await fetch(DB_URL_GET);
-                if (response.ok) {
-                    const dataText = await response.text();
-                    if (dataText && dataText !== "null" && dataText.trim() !== "") {
-                        const parsed = JSON.parse(decodeURIComponent(dataText));
-                        if (Array.isArray(parsed) && parsed.length > 0) {
-                            wishes = parsed;
-                        }
-                    }
-                }
-            } catch (e) {
-                console.warn("تعذر جلب التبريكات من السحابة، جاري استخدام التخزين الاحتياطي المحلي:", e);
-                const local = localStorage.getItem(DB_KEY);
-                if (local) {
-                    try { wishes = JSON.parse(local); } catch(err){}
-                }
+        // Fetch wishes from Local storage
+        function loadWishes() {
+            const stored = localStorage.getItem('weddingWishes_smart_v2');
+            if (stored) {
+                wishes = JSON.parse(stored);
+            } else {
+                localStorage.setItem('weddingWishes_smart_v2', JSON.stringify(wishes));
             }
             displayWishes();
-        }
-
-        async function saveWishesToDb(updatedWishes) {
-            let listToSave = updatedWishes;
-            if (listToSave.length > 25) {
-                listToSave = listToSave.slice(0, 50); // الحفاظ على أحدث 25 تهنئة لحماية الذاكرة والسرعة
-            }
-            
-            // نسخة احتياطية محلية فورية
-            localStorage.setItem(DB_KEY, JSON.stringify(listToSave));
-            
-            // رفع التحديث للسحابة بشكل صامت لجميع المستخدمين
-            try {
-                const payload = encodeURIComponent(JSON.stringify(listToSave));
-                await fetch(`${DB_URL_SET}${payload}`, { method: 'GET', mode: 'no-cors' });
-            } catch (e) {
-                console.error("خطأ أثناء الرفع السحابي للتبريكات:", e);
-            }
         }
 
         function displayWishes() {
-            const wall = document.getElementById('wishesWall');
-            wall.innerHTML = '';
+            wishesWall.innerHTML = '';
+            wishCounter.innerText = `${wishes.length} تبريكة`;
+            
             wishes.forEach(wish => {
                 const card = document.createElement('div');
-                card.className = "wish-card bg-[#faf8f2] border-r-4 border-[#c29d6d] rounded-xl p-6 text-right shadow-md animate-[popIn_0.5s_ease-out]";
+                card.className = 'bg-gold-100/55 p-4 rounded-2xl border border-gold-200/60 shadow-sm space-y-2 transition-all hover:shadow-md';
                 card.innerHTML = `
-                    <h4 class="text-[#1c4b72] font-bold mb-2 flex justify-between items-center flex-wrap gap-2">
-                        <span>${wish.name}</span>
-                        ${wish.relation ? `<span class="text-xs bg-[#c29d6d]/20 text-[#1c4b72] py-1 px-3 rounded-full font-normal">${wish.relation}</span>` : ''}
-                    </h4>
-                    <p class="text-gray-700 leading-relaxed text-sm md:text-base">${wish.text}</p>
-                    ${wish.reply ? `
-                        <div class="mt-4 bg-[#1c4b72]/5 border-r-2 border-[#1c4b72] p-4 rounded-lg">
-                            <div class="font-bold text-xs text-[#c29d6d] mb-1">رد من العريس محمد:</div>
-                            <p class="text-xs md:text-sm text-[#1c4b72] font-semibold">${wish.reply}</p>
-                        </div>
-                    ` : ''}
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-navy-700 text-sm"><i class="fa-solid fa-user-tag text-gold-600 ml-1"></i> ${wish.name}</span>
+                        <span class="text-[10px] bg-gold-200 text-gold-700 px-2 py-0.5 rounded-full font-bold">${wish.relation || 'مهنئ ومحب'}</span>
+                    </div>
+                    <p class="text-xs text-navy-600 leading-relaxed font-semibold italic">"${wish.text}"</p>
                 `;
-                wall.appendChild(card);
+                wishesWall.appendChild(card);
             });
         }
 
-        async function submitWish(event) {
-            event.preventDefault();
-            const nameInput = document.getElementById('guestName');
-            const relationInput = document.getElementById('guestRelation');
-            const messageInput = document.getElementById('guestMessage');
+        // Custom Wishes Form Submit Trigger
+        wishForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
             const submitBtn = document.getElementById('submitWishBtn');
-
-            const guestName = nameInput.value.trim();
-            const guestRelation = relationInput.value.trim();
-            const guestMessage = messageInput.value.trim();
-
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الحفظ وتوجيهكم للواتساب...';
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> جاري الحفظ والتوجيه...';
 
-            // إنتاج رد ذكي من العريس فوراً
-            const aiReply = await generateGroomReply(guestName, guestMessage);
+            const guestName = document.getElementById('guestName').value;
+            const guestRelation = document.getElementById('guestRelation').value;
+            const guestMessage = document.getElementById('guestMessage').value;
 
+            // Save and append
             const newWish = {
                 name: guestName,
                 relation: guestRelation,
-                text: guestMessage,
-                reply: aiReply
+                text: guestMessage
             };
 
             wishes.unshift(newWish); 
-            await saveWishesToDb(wishes);
+            localStorage.setItem('weddingWishes_smart_v2', JSON.stringify(wishes));
             displayWishes();
 
-            // تجهيز وإرسال الرسالة إلى واتساب العريس مباشرة دون عرقلة المتصفح
+            // Prepare and encode the specific WhatsApp Text to send to Groom immediately without window pop blockages
             const whatsappNumber = "967770534273";
             const messageToSend = `السلام عليكم ورحمة الله وبركاته،\nأبارك للعريس الحبيب محمد بن مراد وعائلته الكرام آل الحو بمناسبة الزفاف السعيد!\n\n*الاسم:* ${guestName}\n*صلة القرابة:* ${guestRelation || 'مهنئ ومحب'}\n\n*التهنئة:*\n"${guestMessage}"\n\n_دامت دياركم عامرة بالأفراح والمسرات!_`;
             const encodedText = encodeURIComponent(messageToSend);
             const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodedText}`;
 
-            // تفريغ الحقول وإعادة تفعيل الأزرار قبل الخروج
-            nameInput.value = '';
-            relationInput.value = '';
-            messageInput.value = '';
+            // Reset inputs
+            document.getElementById('guestName').value = '';
+            document.getElementById('guestRelation').value = '';
+            document.getElementById('guestMessage').value = '';
+            
             submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i class="fa-brands fa-whatsapp ml-1"></i> إرسال التهنئة ومشاركتها بالواتساب';
+            submitBtn.innerHTML = '<i class="fa-brands fa-whatsapp ml-1"></i> إرسال ومشاركة بالواتساب';
 
             showToast("تم الحفظ على الجدار بنجاح وتوجيهكم للواتساب لإرسالها للعريس!");
 
-            // فتح محادثة الواتساب للرقم فوراً وبشكل متوافق مع قيود الجوال
+            // Direct location redirect guarantees mobile browser bypass of pop blockers
             window.location.href = whatsappUrl;
-        }
+        });
 
-        // تفعيل التحميل التلقائي للتبريكات السحابية عند بدء التشغيل
+        // Load init wishes wall
         loadWishes();
 
-        // تحديث تلقائي صامت لجدار التهاني كل 15 ثانية لجلب أي تهاني جديدة مباشرة دون الحاجة لتحديث الصفحة
-        setInterval(loadWishes, 15000);
+        // Custom Beautiful Toast Modal Triggers
+        const toast = document.getElementById('toastNotification');
+        const toastMsg = document.getElementById('toastMessage');
 
-        function toggleChat() {
-            const chat = document.getElementById('chatContainer');
-            if (chat.style.display === 'flex') {
-        function handleChatKeyPress(event) {
-            if (event.key === 'Enter') {
-                sendMessage();
-            }
+        function showToast(message) {
+            toastMsg.innerText = message;
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(hideToast, 5000);
         }
 
-        async function sendMessage() {
-            const input = document.getElementById('chatInput');
-            const text = input.value.trim();
-            if (!text) return;
-
-            appendMessage(text, 'user');
-            input.value = '';
-
-            // إظهار مؤشر الكتابة المؤقت
-            const typingId = appendMessage('<i class="fa-solid fa-ellipsis fa-beat"></i> جاري صياغة الترحيب الحار...', 'bot typing');
-
-            const systemPrompt = "أنت المساعد الذكي والافتراضي الفخم لأسرة آل الحو الكرام في زفاف ابنهم الشاب 'محمد بن مراد'. مهمتك هي الترحيب بالضيوف بترحيب حار فائق الأدب والكرم الحضرمي واليمن الأصيل والإجابة على كافة تساؤلاتهم حول حفل الزفاف بناءً على تفاصيل الدعوة الحقيقية: حفل رفع الشراع (عصر الخميس 22 أكتوبر 2026)، عقد القران (عصر الجمعة 23 أكتوبر 2026 في جامع يعقوب الحمد الشحر)، والصبحة والخواد (عصر يوم السبت 24 أكتوبر 2026). والموقع السكني لآل الحو في الشحر، المنصورة الجديدة، حارة الحبيب والإحسان - حضرموت. أجب دوماً بأسلوب أدبي ومبهج وبكلمات كرم تليق بضيوف آل الحو الكرام.";
-            
-            try {
-                const data = await callGemini(text, systemPrompt);
-                const botResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || "أهلاً ومرحباً بك يا غالي! تشرفنا أسرة آل الحو بحضورك وتواجدك المبهج معنا بالشحر.";
-                
-                // إزالة رسالة الكتابة وإضافة الرد الحقيقي
-                document.getElementById(typingId).remove();
-                appendMessage(botResponse, 'bot');
-            } catch (err) {
-                console.error("Chat Error:", err);
-                document.getElementById(typingId).remove();
-                appendMessage("أهلاً بك يا غالي! حضوركم يزيدنا شرفاً وابتهاجاً، ويسعدنا دوماً استقبالكم في منازلنا بمدينة الشحر العامرة بحضرموت.", 'bot');
-            }
-        }
-
-        function sendSuggestion(query) {
-            document.getElementById('chatInput').value = query;
-            sendMessage();
-        }
-
-        function appendMessage(text, sender) {
-            const messagesContainer = document.getElementById('chatMessages');
-            const bubble = document.createElement('div');
-            const id = 'msg_' + Math.random().toString(36).substr(2, 9);
-            bubble.id = id;
-            bubble.className = `chat-bubble ${sender}`;
-            bubble.innerHTML = text;
-            messagesContainer.appendChild(bubble);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            return id;
+        function hideToast() {
+            toast.classList.remove('translate-y-0', 'opacity-100');
+            toast.classList.add('translate-y-24', 'opacity-0');
         }
     </script>
 </body>
