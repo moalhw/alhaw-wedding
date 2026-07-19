@@ -1135,16 +1135,12 @@
         // تفعيل التحميل التلقائي للتبريكات السحابية عند بدء التشغيل
         loadWishes();
 
+        // تحديث تلقائي صامت لجدار التهاني كل 15 ثانية لجلب أي تهاني جديدة مباشرة دون الحاجة لتحديث الصفحة
+        setInterval(loadWishes, 15000);
+
         function toggleChat() {
             const chat = document.getElementById('chatContainer');
             if (chat.style.display === 'flex') {
-                chat.style.display = 'none';
-            } else {
-                chat.style.display = 'flex';
-                document.getElementById('chatInput').focus();
-            }
-        }
-
         function handleChatKeyPress(event) {
             if (event.key === 'Enter') {
                 sendMessage();
