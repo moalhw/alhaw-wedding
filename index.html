@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>أفراح آل الحو | دعوة زفاف العريس محمد </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;700;900&family=Reem+Kufi:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- مكتبة الخرائط التفاعلية Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- مكتبة Tailwind للتصميم المرن السريع والتجاوب التلقائي -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        :root {
+            --primary: #1c4b72;       /* الأزرق الداكن الملكي */
+            --primary-light: #2c6394;
+            --accent: #c29d6d;        /* الذهبي الفاخر */
+            --accent-glow: rgba(194, 157, 109, 0.4);
+            --bg-cream: #faf8f2;      /* خلفية كريمية فخمة */
+            --white: #ffffff;
+            --text-dark: #2d3748;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-cream);
+            font-family: 'Cairo', sans-serif;
+            color: var(--text-dark);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        h1, h2, h3, .poetic-font {
+            font-family: 'Reem Kufi', serif;
+        }
+
+        /* تنسيق مخصص للأوراق النازلة لضمان عدم حدوث بطء في الجوالات */
+        .petals-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 99;
+            overflow: hidden;
+        }
+
+        .petal {
+            position: absolute;
+            background: radial-gradient(circle, #f3e5ab 0%, var(--accent) 100%);
+            border-radius: 15% 70% 15% 70%;
+            opacity: 0.7;
+            pointer-events: none;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-10vh) rotate(0deg) translateX(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(110vh) rotate(360deg) translateX(50px);
+                opacity: 0;
+            }
+        }
+
+        /* تنسيق مخصص للجوال للأوراق النازلة لمنع البطء والتجميد */
+        @media (max-width: 767px) {
+            .petal {
+                animation: none !important;
+                opacity: 0.9 !important;
+                width: 20px !important;
+                height: 20px !important;
+                position: fixed !important;
+            }
+        }
+
+        #envelope-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #121824;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 1.2s cubic-bezier(0.85, 0, 0.15, 1), opacity 1s;
+        }
+
+        /* تصميم ظرف الزفاف المتجاوب بالكامل */
+        .envelope {
+            width: 90%;
+            max-width: 450px;
+            height: 300px;
+            background: var(--primary);
+            border-radius: 10px;
+            position: relative;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+            cursor: pointer;
+            border: 2px solid var(--accent);
+            perspective: 1000px;
+        }
+
+        /* استخدام الـ clip-path لضمان تطابق الأبعاد على الجوال والكمبيوتر دون أي خلل */
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background-color: var(--primary-light);
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            transform-origin: top;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 2;
+        }
+
+        /* الختم الشمعي بتمركز رياضي مطلق لا يخرب في متصفحات الجوال */
+        .wax-seal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 85px;
+            height: 85px;
+            background: radial-gradient(circle, #e2ba80 0%, #a67c45 100%);
+            border-radius: 50%;
+            z-index: 3;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,255,255,0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--primary);
+            font-size: 1.8rem;
+            border: 3px double #7c5726;
+            animation: pulse 2s infinite;
+            transition: transform 0.4s;
+        }
+
+        .wax-seal span {
+            font-family: 'Reem Kufi', sans-serif;
+            font-weight: bold;
+            text-shadow: 1px 1px 1px rgba(255,255,255,0.3);
+        }
+
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 0 rgba(194, 157, 109, 0.7); }
+            70% { transform: translate(-50%, -50%) scale(1.08); box-shadow: 0 0 0 15px rgba(194, 157, 109, 0); }
+            100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 0 rgba(194, 157, 109, 0); }
+        }
+
+        .envelope-text {
+            position: absolute;
+            bottom: 25px;
+            left: 0;
+            width: 100%;
+            color: var(--accent);
+            text-align: center;
+            font-size: 1.2rem;
+            z-index: 1;
+            line-height: 1.6;
+        }
+
+        .unlocked #envelope-wrapper {
+            transform: translateY(-100%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .control-btns-container {
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 999;
+        }
+
+        .action-btn {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            font-size: 1.3rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .action-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .music-btn.playing {
+            animation: rotate 4s linear infinite;
+        }
+
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* تنسيق قسم الشعر الفاخر */
+        .poetry-wrapper {
+            background-color: var(--primary);
+            color: var(--accent);
+            padding: 60px 20px;
+            text-align: center;
+            border-top: 3px solid var(--accent);
+            border-bottom: 3px solid var(--accent);
+            position: relative;
+        }
+
+        .stanza {
+            margin-bottom: 45px;
+        }
+
+        .stanza:last-child {
+            margin-bottom: 0;
+        }
+
+        .poetry-line {
+            font-family: 'Amiri', serif;
+            font-size: 1.8rem;
+            line-height: 2;
+            font-weight: bold;
+            margin: 10px 0;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .poetry-line.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* قسم الشراع التفاعلي */
+        #sail-section {
+            position: relative;
+            min-height: 80vh;
+            background-color: #0f2235;
+            color: var(--white);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            border-bottom: 3px solid var(--accent);
+        }
+
+        .sail-curtain-left, .sail-curtain-right {
+            position: absolute;
+            top: 0;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(135deg, #112d46 0%, #1c4b72 100%);
+            transition: transform 1.5s cubic-bezier(0.77, 0, 0.175, 1);
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .sail-curtain-left {
+            left: 0;
+            border-right: 2px solid var(--accent);
+            justify-content: flex-end;
+        }
+
+        .sail-curtain-right {
+            right: 0;
+            border-left: 2px solid var(--accent);
+            justify-content: flex-start;
+        }
+
+        .curtain-pattern {
+            font-size: 15rem;
+            color: rgba(194, 157, 109, 0.08);
+            user-select: none;
+        }
+
+        .sail-curtain-left .curtain-pattern { transform: translateX(50px); }
+        .sail-curtain-right .curtain-pattern { transform: translateX(-50px); }
+
+        .sail-prompt {
+            position: absolute;
+            z-index: 6;
+            text-align: center;
+            color: var(--accent);
+            background: rgba(15, 34, 53, 0.9);
+            padding: 20px 40px;
+            border-radius: 50px;
+            border: 2px solid var(--accent);
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .sail-prompt:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px var(--accent);
+        }
+
+        #sail-section.opened .sail-curtain-left { transform: translateX(-100%); }
+        #sail-section.opened .sail-curtain-right { transform: translateX(100%); }
+        #sail-section.opened .sail-prompt { opacity: 0; pointer-events: none; }
+
+        .sail-details {
+            text-align: center;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 1s ease 0.5s;
+            z-index: 1;
+            padding: 30px;
+            max-width: 600px;
+        }
+
+        #sail-section.opened .sail-details {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .detail-card {
+            background: rgba(255,255,255,0.06);
+            border: 2px solid var(--accent);
+            border-radius: 20px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+
+        .icon-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: var(--primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.2rem;
+            margin: -80px auto 25px auto;
+            border: 4px solid #0f2235;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        /* الميثاق الغليظ وعقد القران */
+        .marriage-section {
+            padding: 80px 20px;
+            background-color: var(--bg-cream);
+            text-align: center;
+        }
+
+        .marriage-book {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--white);
+            border: 1px solid rgba(194, 157, 109, 0.3);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .marriage-book::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 1px;
+            background: rgba(194, 157, 109, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .marriage-book::before { display: none; }
+            .book-columns { flex-direction: column; gap: 30px; }
+        }
+
+        .book-columns {
+            display: flex;
+            justify-content: space-between;
+            text-align: center;
+        }
+
+        .book-column {
+            flex: 1;
+            padding: 0 20px;
+        }
+
+        /* نافذة المساعد الذكي */
+        .chat-container {
+            position: fixed;
+            bottom: 95px;
+            left: 25px;
+            width: 350px;
+            max-width: calc(100vw - 50px);
+            height: 450px;
+            background: var(--white);
+            border: 2px solid var(--accent);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .chat-header {
+            background-color: var-[#1c4b72];
+            color: var(--white);
+            background-color: var(--primary);
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background-color: var(--bg-cream);
+        }
+
+        .chat-bubble {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .chat-bubble.bot {
+            background-color: var(--white);
+            border-right: 4px solid var(--accent);
+            align-self: flex-start;
+            text-align: right;
+        }
+
+        .chat-bubble.user {
+            background-color: var(--primary);
+            color: var(--white);
+            align-self: flex-end;
+            text-align: right;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 1s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+        @keyframes zoomIn { to { opacity: 1; transform: scale(1); } }
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="bg-[#faf8f2]">
+
+    <div class="petals-container" id="petals"></div>
+
+    <!-- نافذة إشعارات مخصصة لتجنب استخدام alert على الجوال -->
+    <div id="custom-toast" class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-[#121824] text-[#faf8f2] border-2 border-[#c29d6d] py-3 px-6 rounded-xl shadow-2xl z-[99999] transition-all duration-300 opacity-0 pointer-events-none text-center font-bold">
+        <span id="toast-message">تمت العملية بنجاح!</span>
+    </div>
+
+    <!-- 1. غلاف المغلف الفخم عند البداية -->
+    <div id="envelope-wrapper">
+        <div class="envelope" onclick="openInvitation()">
+            <div class="envelope-flap" id="flap"></div>
+            <div class="wax-seal">
+                <span>الحو</span>
+            </div>
+            <div class="envelope-text">
+                <p class="font-bold">دعوة زفاف خاصة</p>
+                <small class="text-sm">انقر على الختم لفتح الدعوة </small>
+            </div>
+        </div>
+    </div>
+
+    <!-- أزرار التحكم بالمساعدة والزفة الصوتية -->
+    <div class="control-btns-container">
+        <!-- زر المساعد الذكي -->
+        <button class="action-btn" id="chatToggleBtn" onclick="toggleChat()" title="مساعدالذكي">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+        </button>
+        <!-- زر الموسيقى -->
+        <button class="action-btn music-btn" id="musicBtn" onclick="toggleMusic()" title="تشغيل اللحن">
+            <i class="fa-solid fa-music"></i>
+        </button>
+    </div>
+
+    <!-- زفة بدون موسيقى (صوت بشري نقي مميز) -->
+    <audio id="weddingMusic" loop preload="auto">
+        <source src="https://archive.org/download/mixvocalonlynasheeds/Baraka%20Allahu%20Lakuma%20%28Vocals%20Only%20Versio%29.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="chat-container" id="chatContainer">
+        <div class="chat-header">
+            <h4 class="font-bold">مساعد الذكي ✨</h4>
+            <button onclick="toggleChat()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="chat-bubble bot">
+                أهلاً بك يا ضيفنا العزيز! 🌸 أنا المساعد الذكي لأسرة آل الحو. يسعدني إجابتك على أي استفسار يخص حفل زفاف ابننا الغالي محمد مراد في مدينة الشحر. كيف يمكنني خدمتك اليوم؟
+            </div>
+        </div>
+        <div class="flex gap-2 p-2 overflow-x-auto bg-white border-t border-gray-100">
+            <button class="bg-[#c29d6d]/20 text-[#1c4b72] border border-[#c29d6d] px-3 py-1 rounded-full whitespace-nowrap text-sm hover:bg-[#1c4b72] hover:text-white transition" onclick="sendSuggestion('متى موعد رفع الشراع؟')">رفع الشراع؟</button>
+            <button class="bg-[#c29d6d]/20 text-[#1c4b72] border border-[#c29d6d] px-3 py-1 rounded-full whitespace-nowrap text-sm hover:bg-[#1c4b72] hover:text-white transition" onclick="sendSuggestion('أين يقع جامع يعقوب الحمد؟')">موقع المسجد؟</button>
+            <button class="bg-[#c29d6d]/20 text-[#1c4b72] border border-[#c29d6d] px-3 py-1 rounded-full whitespace-nowrap text-sm hover:bg-[#1c4b72] hover:text-white transition" onclick="sendSuggestion('متى صبحة العريس؟')">صبحة العريس؟</button>
+        </div>
+        <div class="flex border-t border-gray-200 p-2 bg-white">
+            <input type="text" id="chatInput" class="flex-1 border border-gray-200 rounded-full px-4 py-2 outline-none" placeholder="اكتب سؤالك هنا عن الفرح..." onkeypress="handleChatKeyPress(event)">
+            <button onclick="sendMessage()" class="bg-[#1c4b72] text-white w-10 h-10 rounded-full mr-2 flex justify-center items-center"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- 2. قسم الترحيب الرئيسي والبسملة -->
+    <header class="min-height-[100vh] flex flex-col justify-center items-center text-center py-20 px-5 relative bg-gradient-to-b from-white to-[#faf8f2] border-b-2 border-double border-[#c29d6d]">
+        <div class="basmalah text-2xl text-[#1c4b72] font-serif mb-6 opacity-0 translate-y-5 animate-[fadeInUp_1s_forwards_0.5s]">بسم الله الرحمن الرحيم</div>
+        
+        <h1 class="main-title text-4xl md:text-5xl lg:text-6xl text-[#1c4b72] font-extrabold my-4 opacity-0 translate-y-5 animate-[fadeInUp_1.2s_forwards_1s]">أفراح آل الحو</h1>
+        
+        <div class="hosts-text text-lg md:text-xl max-w-2xl leading-loose text-gray-700 my-6 opacity-0 translate-y-5 animate-[fadeInUp_1.2s_forwards_1.5s]">
+            تتشرف أسرة المرحوم <b class="text-[#1c4b72] font-bold">أحمد عوض الحو</b> وأولاده<br>
+            بدعوتكم لحضور مراسم زواج ابنهم
+        </div>
+
+        <div class="groom-box border-2 border-[#c29d6d] rounded-2xl py-5 px-10 md:px-16 bg-white shadow-lg mx-auto inline-block opacity-0 scale-90 animate-[zoomIn_1.5s_forwards_2s]">
+            <h2 class="text-3xl md:text-4xl text-[#1c4b72] font-extrabold">محمد بن مراد</h2>
+        </div>
+    </header>
+
+    <!-- 3. الأبيات الشعرية العائمة -->
+    <section class="poetry-wrapper">
+        <div class="stanza">
+            <div class="poetry-line">هلت ليالي الانس والافراح</div>
+            <div class="poetry-line">والي حضر مابينكم مرتاح</div>
+            <div class="poetry-line">محمد مراد من خيرة العرسان</div>
+            <div class="poetry-line text-[#c29d6d] font-bold">أهلاً بكم في حارة الإحسان</div>
+        </div>
+        
+        <div class="stanza">
+            <div class="poetry-line">مراد احمد بيده المفتاح</div>
+            <div class="poetry-line">وينتبهلك ساعة المرواح</div>
+            <div class="poetry-line">واخوان ع يسرته والايمان</div>
+            <div class="poetry-line text-[#c29d6d] font-bold">أهلاً بكم في حارة الإحسان</div>
+        </div>
+
+        <div class="stanza">
+            <div class="poetry-line">ي عريسنا ي الشاب ي الناجح</div>
+            <div class="poetry-line">طبعك مع الاصحاب تتصالح</div>
+            <div class="poetry-line">نا نحسبك من خيرة الولدان</div>
+            <div class="poetry-line text-[#c29d6d] font-bold">أهلاً بكم في حارة الاحسان</div>
+        </div>
+    </section>
+
+    <!-- 4. العداد التنازلي التفاعلي -->
+    <section class="countdown-container reveal py-12 px-5 text-center bg-white">
+        <h3 class="countdown-title text-[#1c4b72] text-xl font-bold mb-6">متبقي على المراسيم </h3>
+        <div class="timer flex justify-center gap-4 md:gap-6 flex-wrap">
+            <div class="time-box bg-[#1c4b72] text-white border-2 border-[#c29d6d] rounded-xl p-4 min-w-[85px] md:min-w-[100px] shadow-lg">
+                <span id="days" class="block text-2xl md:text-3xl font-extrabold text-[#c29d6d]">00</span>
+                <label class="text-xs text-slate-300">أيام</label>
+            </div>
+            <div class="time-box bg-[#1c4b72] text-white border-2 border-[#c29d6d] rounded-xl p-4 min-w-[85px] md:min-w-[100px] shadow-lg">
+                <span id="hours" class="block text-2xl md:text-3xl font-extrabold text-[#c29d6d]">00</span>
+                <label class="text-xs text-slate-300">ساعات</label>
+            </div>
+            <div class="time-box bg-[#1c4b72] text-white border-2 border-[#c29d6d] rounded-xl p-4 min-w-[85px] md:min-w-[100px] shadow-lg">
+                <span id="minutes" class="block text-2xl md:text-3xl font-extrabold text-[#c29d6d]">00</span>
+                <label class="text-xs text-slate-300">دقائق</label>
+            </div>
+            <div class="time-box bg-[#1c4b72] text-white border-2 border-[#c29d6d] rounded-xl p-4 min-w-[85px] md:min-w-[100px] shadow-lg">
+                <span id="seconds" class="block text-2xl md:text-3xl font-extrabold text-[#c29d6d]">00</span>
+                <label class="text-xs text-slate-300">ثواني</label>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. قسم "رفع الشراع" - الستارة الفاصلة التفاعلية -->
+    <section id="sail-section" class="reveal">
+        <div class="sail-curtain-left">
+            <i class="fa-solid fa-ship curtain-pattern"></i>
+        </div>
+        <div class="sail-curtain-right">
+            <i class="fa-solid fa-ship curtain-pattern"></i>
+        </div>
+        
+        <div class="sail-prompt" id="sailPrompt" onclick="openSail()">
+            <i class="fa-solid fa-anchor"></i> انقر هنا لرفع الشراع
+        </div>
+
+        <div class="sail-details">
+            <div class="detail-card">
+                <div class="icon-circle">
+                    <i class="fa-solid fa-campground"></i>
+                </div>
+                <h3 class="text-[#c29d6d] font-bold mb-4 text-2xl md:text-3xl">فعالية رفع الشراع</h3>
+                <p class="text-base md:text-lg leading-relaxed mb-5 text-gray-200">
+                    يسرنا ويشرفنا استقبالكم لتدشين الفرح بمراسم رفع الشراع والبدء بأجواء المسرات.
+                </p>
+                <div class="text-lg md:text-xl font-bold text-[#c29d6d]">
+                    عصر يوم الخميس | الموافق 2026/10/22
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. قسم عقد القران (بتصميم الكتاب الفني) -->
+    <section class="marriage-section reveal">
+        <h2 class="text-[#1c4b72] mb-10 text-2xl md:text-3xl font-extrabold">مراسم عقد القران الميمون</h2>
+        <div class="marriage-book">
+            <div class="book-columns">
+                <div class="book-column">
+                    <i class="fa-solid fa-book-open text-5xl text-[#c29d6d] mb-5"></i>
+                    <h3 class="text-[#1c4b72] text-xl font-bold mb-4">الميثاق الغليظ</h3>
+                    <p class="text-gray-700 leading-relaxed text-sm md:text-base">
+                        عقد القران ومراسم الزواج بحضور الأهل والأحباب لتفيض القلوب بالبركة والمحبة الطاهرة في رحاب المسجد الأثري.
+                    </p>
+                </div>
+                <div class="book-column">
+                    <i class="fa-solid fa-mosque text-5xl text-[#c29d6d] mb-5"></i>
+                    <h3 class="text-[#1c4b72] text-xl font-bold mb-4">الزمان والمكان</h3>
+                    <p class="text-gray-700 leading-relaxed text-sm md:text-base font-bold">
+                        عصر يوم الجمعة المباركة<br>
+                        الموافق 2026/10/23<br>
+                        <span class="text-[#c29d6d]">في جامع يعقوب الحمد</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. فعاليات ومراسم الضيافة (تم إلغاء مأدبة الغداء والاقتصار على الصبحة) -->
+    <section class="other-events-section reveal py-16 px-5 bg-white text-center">
+        <h2 class="text-[#1c4b72] text-3xl font-extrabold mb-10">فعاليات ومراسم الضيافة</h2>
+        <div class="max-w-xl mx-auto">
+            <!-- بطاقة الصبحة فقط، ممركزة بشكل فخم وجذاب -->
+            <div class="event-tile bg-[#faf8f2] rounded-2xl p-8 border-t-8 border-[#1c4b72] shadow-md transition-transform duration-300 hover:-translate-y-2">
+                <i class="fa-solid fa-mug-hot text-5xl text-[#c29d6d] mb-4"></i>
+                <h3 class="text-[#1c4b72] text-2xl font-bold mb-3">الصبحة والخواد</h3>
+                <p class="text-gray-700 leading-relaxed text-base mb-4">مشاركة العريس بهجة صباحية زفافه وتقديم التهاني والتقاليد العبقة للأهل والضيوف في الشحر.</p>
+                <strong class="text-[#c29d6d] text-lg">عصر يوم السبت 2026/10/24</strong>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. الخريطة التفاعلية الحية وموقع المسجد والبيت -->
+    <section class="map-section reveal py-16 px-5 bg-[#faf8f2] text-center">
+        <h2 class="text-[#1c4b72] text-2xl md:text-3xl font-bold">خريطة موقع الفرح وجامع يعقوب الحمد</h2>
+        <p class="mt-3 text-gray-600 max-w-lg mx-auto">اضغط للتفاعل والوصول إلى المواقع المحددة بدقة في مدينة الشحر بحضرموت بكل سهولة.</p>
+        
+        <div class="max-w-5xl mx-auto mt-10 bg-white rounded-3xl border-4 border-[#c29d6d] shadow-2xl overflow-hidden">
+            <div id="wedding-map" class="w-full h-[400px] md:h-[480px] z-10"></div>
+            <div class="map-info p-6 bg-[#1c4b72] text-white">
+                <h3 class="text-[#c29d6d] text-2xl font-bold">بيتنا الكائن في الشحر</h3>
+                <p class="mt-2 text-slate-200">المنصورة الجديدة، حارة الحبيب والإحسان - الشحر، حضرموت، اليمن</p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4 mt-6">
+                    <a href="https://maps.google.com/?q=14.761110,49.583006" target="_blank" class="inline-block bg-[#c29d6d] text-[#1c4b72] font-bold py-3 px-6 rounded-full hover:bg-white hover:text-[#1c4b72] transition shadow-lg">
+                        <i class="fa-solid fa-house-chimney"></i> موقع البيت بالخرائط
+                    </a>
+                    <a href="https://maps.google.com/?q=14.765376,49.586141" target="_blank" class="inline-block bg-[#faf8f2] text-[#1c4b72] font-bold py-3 px-6 rounded-full hover:bg-[#c29d6d] hover:text-white transition shadow-lg">
+                        <i class="fa-solid fa-mosque"></i> موقع المسجد بالخرائط
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 9. جدار التهاني وأداة الذكاء الاصطناعي مع إرسال الرسائل الفوري للواتساب -->
+    <section class="guestbook-section reveal py-16 px-5 bg-white text-center">
+        <h2 class="text-[#1c4b72] text-2xl md:text-3xl font-extrabold mb-3">تهاني وتبريكات الضيوف والأحباب</h2>
+        <p class="mb-8 text-gray-600 max-w-lg mx-auto">اكتب مباركتك للعريس لتنشر فوراً على جدار الفرح وتصل مباشرة لهاتف العريس عبر الواتساب!</p>
+        
+        <div class="max-w-xl mx-auto bg-[#faf8f2] p-6 md:p-10 rounded-3xl border border-[#c29d6d]/40 shadow-xl">
+            <!-- أداة صياغة التهاني بالذكاء الاصطناعي -->
+            <div class="bg-[#f0f4f8] border border-dashed border-[#c29d6d] rounded-2xl p-5 mb-6 text-right">
+                <div class="flex items-center gap-2 mb-3">
+                    <i class="fa-solid fa-wand-magic-sparkles text-[#c29d6d]"></i>
+                    <span class="text-[#1c4b72] font-bold text-sm">هل تبحث عن الكلمات المناسبة؟ دع الذكاء الاصطناعي يصيغها لك!</span>
+                </div>
+                <div class="mb-3">
+                    <label for="guestRelation" class="block text-xs font-bold text-[#2c6394] mb-1">صلة قرابتك بالعريس (مثلاً: صديق، خال، ابن عم..)</label>
+                    <input type="text" id="guestRelation" class="w-full p-2 border border-blue-200/50 rounded-lg bg-white text-sm outline-none focus:border-[#c29d6d]" placeholder="مثال: زميل العريس، جار، إلخ">
+                </div>
+                <button type="button" class="bg-[#c29d6d] text-[#1c4b72] font-bold px-4 py-2 rounded-lg text-sm transition hover:bg-[#1c4b72] hover:text-white" id="generateAiWishBtn" onclick="generateWishWithAI()">
+                    <i class="fa-solid fa-magic"></i> توليد تهنئة بليغة فوراً
+                </button>
+            </div>
+
+            <form id="wishForm" onsubmit="submitWish(event)" class="text-right">
+                <div class="mb-5">
+                    <label for="guestName" class="block mb-2 font-bold text-[#1c4b72]">اسمك الكريم</label>
+                    <input type="text" id="guestName" class="w-full p-3 border border-slate-200 rounded-xl bg-white outline-none focus:border-[#c29d6d]" placeholder="اكتب اسمك هنا" required>
+                </div>
+                <div class="mb-5">
+                    <label for="guestMessage" class="block mb-2 font-bold text-[#1c4b72]">المباركة أو التهنئة</label>
+                    <textarea id="guestMessage" class="w-full p-3 border border-slate-200 rounded-xl bg-white outline-none focus:border-[#c29d6d]" rows="4" placeholder="اكتب تبريكاتك للعريس ومحبته بالقلب" required></textarea>
+                </div>
+                <button type="submit" class="w-full py-4 bg-[#1c4b72] text-white font-bold rounded-xl text-lg hover:bg-[#2c6394] transition shadow-lg" id="submitWishBtn">
+                    <i class="fa-brands fa-whatsapp ml-1"></i> إرسال التهنئة ومشاركتها بالواتساب
+                </button>
+            </form>
+        </div>
+
+        <div class="wishes-wall mt-12 max-w-4xl mx-auto max-h-[500px] overflow-y-auto flex flex-col gap-5 p-2" id="wishesWall">
+            <!-- سيتم توليد التهاني والردود برمجياً هنا -->
+        </div>
+    </section>
+
+    <!-- التذييل الفخم والنهائي -->
+    <footer class="bg-[#1c4b72] text-white py-12 px-5 text-center border-t-4 border-[#c29d6d]">
+        <p class="font-serif text-2xl text-[#c29d6d]">دامت دياركم عامرة بالأفراح والمسرات</p>
+        <p class="mt-3 text-slate-300 max-w-md mx-auto">حضوركم يزيد أفراحنا بهجة، ويشرفنا مشاركتكم هذه المناسبة السعيدة</p>
+        <p class="font-bold mt-6 text-[#c29d6d] text-lg">آل الحو</p>
+    </footer>
+
+    <script>
+        const apiKey = ""; // سيتم تفعيلها تلقائياً عند التشغيل بواسطة Canvas
+        
+        // دالة لعرض الإشعارات الفخمة بدلاً من alert المزعج
+        function showToast(message) {
+            const toast = document.getElementById('custom-toast');
+            const toastMsg = document.getElementById('toast-message');
+            toastMsg.innerText = message;
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            toast.classList.add('opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('opacity-100');
+                toast.classList.add('opacity-0', 'pointer-events-none');
+            }, 5000);
+        }
+
+        const audio = document.getElementById('weddingMusic');
+        audio.volume = 0.25; // تعيين الصوت بشكل منخفض ليكون مريحاً
+        const musicBtn = document.getElementById('musicBtn');
+        let isPlaying = false;
+
+        // 1. فتح مغلف الدعوة الرقمية الفاخرة
+        function openInvitation() {
+            // تشغيل الصوت فوراً استجابة لنقرة المستخدم لتخطي جدران حماية الهواتف المحمولة
+            try {
+                audio.play().then(() => {
+                    isPlaying = true;
+                    musicBtn.classList.add('playing');
+                    musicBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
+                }).catch(err => {
+                    console.log("الصوت بانتظار تفاعل المستخدم لبدء الزفة:", err);
+                });
+            } catch(e) {
+                console.log("Audio play caught directly");
+            }
+
+            document.getElementById('flap').style.transform = 'rotateX(180deg)';
+            setTimeout(() => {
+                document.body.classList.add('unlocked');
+            }, 400);
+        }
+
+        // التحكم في الموسيقى واللحن لزفاف هادئ بصوت زفة منخفض في الخلفية
+        function toggleMusic(forcePlay = false) {
+            if (forcePlay || !isPlaying) {
+                audio.play().then(() => {
+                    isPlaying = true;
+                    musicBtn.classList.add('playing');
+                    musicBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
+                }).catch(err => {
+                    console.log("الصوت بانتظار تفاعل المستخدم لبدء الزفة");
+                    document.addEventListener('click', () => {
+                        if(!isPlaying) {
+                            audio.play();
+                            isPlaying = true;
+                            musicBtn.classList.add('playing');
+                            musicBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
+                        }
+                    }, { once: true });
+                });
+            } else {
+                audio.pause();
+                isPlaying = false;
+                musicBtn.classList.remove('playing');
+                musicBtn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
+            }
+        }
+
+        // توليد بتلات الورد الذهبي
+        function createPetals() {
+            const container = document.getElementById('petals');
+            const isMobile = window.innerWidth < 768;
+
+            if (isMobile) {
+                // للجوال: تثبيت الأوراق في الأعلى لتجنب حدوث بطء في الأداء
+                container.innerHTML = `
+                    <div class="petal" style="top: 15px; left: 15px; transform: rotate(15deg) scale(1.2);"></div>
+                    <div class="petal" style="top: 25px; left: 45px; transform: rotate(45deg);"></div>
+                    <div class="petal" style="top: 15px; right: 15px; transform: rotate(-15deg) scale(1.2);"></div>
+                    <div class="petal" style="top: 25px; right: 45px; transform: rotate(-45deg);"></div>
+                `;
+                return;
+            }
+
+            // للكمبيوتر واللابتوب: تتساقط أوراق الورد بكامل عذوبتها وتفاعليتها
+            for (let i = 0; i < 30; i++) {
+                const petal = document.createElement('div');
+                petal.classList.add('petal');
+                petal.style.left = Math.random() * 100 + 'vw';
+                petal.style.width = Math.random() * 15 + 10 + 'px';
+                petal.style.height = petal.style.width;
+                petal.style.animationDuration = Math.random() * 5 + 4 + 's';
+                petal.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(petal);
+            }
+        }
+        createPetals();
+
+        // تفعيل كشف الشراع
+        function openSail() {
+            document.getElementById('sail-section').classList.add('opened');
+        }
+
+        // ظهور الأبيات الشعرية العائمة تباعاً عند النزول بالصفحة
+        window.addEventListener('scroll', () => {
+            const lines = document.querySelectorAll('.poetry-line');
+            lines.forEach((line, index) => {
+                const rect = line.getBoundingClientRect();
+                if (rect.top < window.innerHeight - 80) {
+                    setTimeout(() => {
+                        line.classList.add('visible');
+                    }, index * 100); 
+                }
+            });
+
+            const reveals = document.querySelectorAll('.reveal');
+            reveals.forEach(reveal => {
+                const windowHeight = window.innerHeight;
+                const revealTop = reveal.getBoundingClientRect().top;
+                const revealPoint = 150;
+
+                if (revealTop < windowHeight - revealPoint) {
+                    reveal.classList.add('active');
+                }
+            });
+        });
+
+        // عداد تنازلي دقيق حتى موعد الفرح المنتظر (22 أكتوبر 2026)
+        const targetDate = new Date("October 22, 2026 16:00:00").getTime();
+
+        const countdownInterval = setInterval(() => {
+            const now = new Date().getTime();
+            const difference = targetDate - now;
+
+            const d = Math.floor(difference / (1000 * 60 * 60 * 24));
+            const h = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((difference % (1000 * 60)) / 1000);
+
+            document.getElementById("days").innerText = d < 10 ? "0" + d : d;
+            document.getElementById("hours").innerText = h < 10 ? "0" + h : h;
+            document.getElementById("minutes").innerText = m < 10 ? "0" + m : m;
+            document.getElementById("seconds").innerText = s < 10 ? "0" + s : s;
+
+            if (difference < 0) {
+                clearInterval(countdownInterval);
+                document.querySelector(".countdown-title").innerText = "دامت الأفراح والمحبة بقلوبكم!";
+            }
+        }, 1000);
+
+        // حماية كود الخريطة لمنع انهيار الموقع على الجوال إذا تعذر تحميل Leaflet
+        if (typeof L !== 'undefined') {
+            try {
+                let map = L.map('wedding-map').setView([14.763243, 49.584573], 15); 
+                
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(map);
+
+                let mosqueIcon = L.divIcon({
+                    html: '<i class="fa-solid fa-mosque" style="color: #1c4b72; font-size: 2.2rem; filter: drop-shadow(0px 3px 5px rgba(0,0,0,0.3));"></i>',
+                    iconSize: [45, 45],
+                    className: 'custom-div-icon'
+                });
+
+                let homeIcon = L.divIcon({
+                    html: '<i class="fa-solid fa-house-chimney-window" style="color: #c29d6d; font-size: 2.2rem; filter: drop-shadow(0px 3px 5px rgba(0,0,0,0.3));"></i>',
+                    iconSize: [45, 45],
+                    className: 'custom-div-icon2'
+                });
+
+                // البيت (14.761110, 49.583006)
+                L.marker([14.761110, 49.583006], {icon: homeIcon}).addTo(map)
+                    .bindPopup('<b>بيتنا الكائن في الشحر</b><br>حارة الحبيب والإحسان').openPopup();
+
+                // المسجد (14.765376, 49.586141)
+                L.marker([14.765376, 49.586141], {icon: mosqueIcon}).addTo(map)
+                    .bindPopup('<b>جامع يعقوب الحمد</b><br>موقع عقد القران المبارك (عصر الجمعة)');
+            } catch (err) {
+                console.warn("تعذر تشغيل الخريطة التفاعلية: ", err);
+            }
+        }
+
+        async function callGemini(userQuery, systemPrompt) {
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                }
+            };
+
+            let delay = 1000;
+            for (let i = 0; i < 3; i++) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (response.ok) {
+                        return await response.json();
+                    }
+                } catch (error) {
+                    if (i === 2) throw error;
+                }
+                await new Promise(resolve => setTimeout(resolve, delay));
+                delay *= 2;
+            }
+        }
+
+        // صياغة تهنئة مخصصة بالذكاء الاصطناعي بناءً على علاقة القرابة
+        async function generateWishWithAI() {
+            const guestName = document.getElementById('guestName').value.trim();
+            const relation = document.getElementById('guestRelation').value.trim();
+            const generateBtn = document.getElementById('generateAiWishBtn');
+
+            if (!guestName) {
+                showToast("يرجى كتابة اسمك الكريم أولاً في حقل الاسم لتتم صياغة تهنئة تناسبك.");
+                return;
+            }
+
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري صياغة الكلمات الأدبية...';
+
+            const systemPrompt = "أنت كاتب ومصمم أدبي بليغ وخبير بالأدب والتقاليد الحضرمية واليمنية العبقة. صغ تهنئة زفاف فائقة الرقي والجمال والشاعرية موجهة للعريس محمد بن مراد وعائلته آل الحو بمناسبة الزفاف في مدينة الشحر. صغها بناءً على علاقة المهنئ المذكورة وقصرها لتكون بطول فقرة واحدة دافئة وصالحة للعرض على جدار زفاف عام ومباشر.";
+            const userPrompt = `اسم المهنئ: ${guestName}، علاقته بالعريس: ${relation || 'صديق ومهنئ مقرب'}. صغ تهنئة مخصصة معبرة جداً بدون أي موسيقى أو إشارة لها.`;
+
+            try {
+                const data = await callGemini(userPrompt, systemPrompt);
+                const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (generatedText) {
+                    document.getElementById('guestMessage').value = generatedText.trim();
+                } else {
+                    showToast("لم نتمكن من الحصول على تهنئة، جرب صياغة تهنئتك الخاصة.");
+                }
+            } catch (err) {
+                console.error("Gemini Error:", err);
+                showToast("حدث خطأ أثناء التواصل مع خادم الذكاء الاصطناعي. جرب مجدداً.");
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = '<i class="fa-solid fa-magic"></i> توليد تهنئة بليغة فوراً';
+            }
+        }
+
+        // توليد رد شكر فوري وتلقائي من العريس محمد للضيف
+        async function generateGroomReply(guestName, guestMessage) {
+            const systemPrompt = "أنت العريس الشاب محمد بن مراد من آل الحو في مدينة الشحر بحضرموت. قم بصياغة رد شكر فوري فائق المحبة والتقدير والأدب لضيفك الذي أرسل لتوه مباركته على جدار التهاني. اجعل الرد شاعرياً، قصيراً (من 1 إلى 2 سطر)، ومناسباً بامتنان فخم يعكس ذوقك الرفيع وكرم آل الحو.";
+            const userPrompt = `الضيف العزيز: ${guestName}. أرسل التهنئة التالية: "${guestMessage}". رد عليه بلطف واشكر حضوره المحتمل ومباركته الغالية.`;
+
+            try {
+                const data = await callGemini(userPrompt, systemPrompt);
+                return data.candidates?.[0]?.content?.parts?.[0]?.text || "شكراً جزيلاً لتهنئتك الكريمة ولتمنياتك الطيبة التي تسعد قلبي في الشحر الغالية. دمت في صحة ومسرات!";
+            } catch (err) {
+                console.error("Reply Error:", err);
+                return "شكراً جزيلاً لتهنئتك الكريمة ولتمنياتك الطيبة التي تسعد قلبي. دمت في صحة ومسرات!";
+            }
+        }
+
+        // التهاني الافتراضية
+        let wishes = JSON.parse(localStorage.getItem('weddingWishes_smart_v2')) || [
+            { name: "آل الحو الكرام", relation: "الاهل", text: "ألف مبروك للعريس الغالي محمد بن مراد، ونسأل الله أن يبارك لهما ويبارك عليهما ويجمع بينهما في خير ومحبة.", reply: "بارك الله فيكم يا آل الحو الكرام ولا حرمنا الله من ودكم وجميل حضوركم في الشحر حضرموت." },
+            { name: "صديقك عبدالله", relation: "صديق مقرب", text: "مبارك يا محمد ليلة فرحكم الغالي، تستاهل كل خير ودامت دياركم بالشحر واليمن مليئة بالأفراح والسعادة الدائمة.", reply: "تسلم يا عادل الغالي وعقبال فرحتك الكبرى يا رفيق الدرب الحبيب!" }
+        ];
+
+        function displayWishes() {
+            const wall = document.getElementById('wishesWall');
+            wall.innerHTML = '';
+            wishes.forEach(wish => {
+                const card = document.createElement('div');
+                card.className = "wish-card bg-[#faf8f2] border-r-4 border-[#c29d6d] rounded-xl p-6 text-right shadow-md animate-[popIn_0.5s_ease-out]";
+                card.innerHTML = `
+                    <h4 class="text-[#1c4b72] font-bold mb-2 flex justify-between items-center flex-wrap gap-2">
+                        <span>${wish.name}</span>
+                        ${wish.relation ? `<span class="text-xs bg-[#c29d6d]/20 text-[#1c4b72] py-1 px-3 rounded-full font-normal">${wish.relation}</span>` : ''}
+                    </h4>
+                    <p class="text-gray-700 leading-relaxed text-sm md:text-base">${wish.text}</p>
+                    ${wish.reply ? `
+                        <div class="mt-4 bg-[#1c4b72]/5 border-r-2 border-[#1c4b72] p-4 rounded-lg">
+                            <div class="font-bold text-xs text-[#c29d6d] mb-1">رد من العريس محمد:</div>
+                            <p class="text-xs md:text-sm text-[#1c4b72] font-semibold">${wish.reply}</p>
+                        </div>
+                    ` : ''}
+                `;
+                wall.appendChild(card);
+            });
+        }
+
+        async function submitWish(event) {
+            event.preventDefault();
+            const nameInput = document.getElementById('guestName');
+            const relationInput = document.getElementById('guestRelation');
+            const messageInput = document.getElementById('guestMessage');
+            const submitBtn = document.getElementById('submitWishBtn');
+
+            const guestName = nameInput.value.trim();
+            const guestRelation = relationInput.value.trim();
+            const guestMessage = messageInput.value.trim();
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الحفظ وتوجيهكم للواتساب...';
+
+            // إنتاج رد ذكي من العريس فوراً
+            const aiReply = await generateGroomReply(guestName, guestMessage);
+
+            const newWish = {
+                name: guestName,
+                relation: guestRelation,
+                text: guestMessage,
+                reply: aiReply
+            };
+
+            wishes.unshift(newWish); 
+            localStorage.setItem('weddingWishes_smart_v2', JSON.stringify(wishes));
+            
+            displayWishes();
+
+            // تجهيز الإرسال إلى واتساب مباشرة للرقم المخصص
+            const whatsappNumber = "967770534273";
+            const messageToSend = `السلام عليكم ورحمة الله وبركاته،\nأبارك للعريس الحبيب محمد بن مراد وعائلته الكرام آل الحو بمناسبة الزفاف السعيد!\n\n*الاسم:* ${guestName}\n*صلة القرابة:* ${guestRelation || 'مهنئ ومحب'}\n\n*التهنئة:*\n"${guestMessage}"\n\n_دامت دياركم عامرة بالأفراح والمسرات!_`;
+            const encodedText = encodeURIComponent(messageToSend);
+            const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodedText}`;
+
+            // فتح محادثة الواتساب للرقم
+            window.open(whatsappUrl, '_blank');
+
+            // تفريغ الحقول وإعادة تفعيل الأزرار
+            nameInput.value = '';
+            relationInput.value = '';
+            messageInput.value = '';
+
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fa-brands fa-whatsapp ml-1"></i> إرسال التهنئة ومشاركتها بالواتساب';
+
+            showToast("تم الحفظ على الجدار بنجاح وتوجيهكم للواتساب لإرسالها للعريس!");
+        }
+
+        displayWishes();
+
+        function toggleChat() {
+            const chat = document.getElementById('chatContainer');
+            if (chat.style.display === 'flex') {
+                chat.style.display = 'none';
+            } else {
+                chat.style.display = 'flex';
+                document.getElementById('chatInput').focus();
+            }
+        }
+
+        function handleChatKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            appendMessage(text, 'user');
+            input.value = '';
+
+            // إظهار مؤشر الكتابة المؤقت
+            const typingId = appendMessage('<i class="fa-solid fa-ellipsis fa-beat"></i> جاري صياغة الترحيب الحار...', 'bot typing');
+
+            const systemPrompt = "أنت المساعد الذكي والافتراضي الفخم لأسرة آل الحو الكرام في زفاف ابنهم الشاب 'محمد بن مراد'. مهمتك هي الترحيب بالضيوف بترحيب حار فائق الأدب والكرم الحضرمي واليمن الأصيل والإجابة على كافة تساؤلاتهم حول حفل الزفاف بناءً على تفاصيل الدعوة الحقيقية: حفل رفع الشراع (عصر الخميس 22 أكتوبر 2026)، عقد القران (عصر الجمعة 23 أكتوبر 2026 في جامع يعقوب الحمد الشحر)، والصبحة والخواد (عصر يوم السبت 24 أكتوبر 2026). والموقع السكني لآل الحو في الشحر، المنصورة الجديدة، حارة الحبيب والإحسان - حضرموت. أجب دوماً بأسلوب أدبي ومبهج وبكلمات كرم تليق بضيوف آل الحو الكرام.";
+            
+            try {
+                const data = await callGemini(text, systemPrompt);
+                const botResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || "أهلاً ومرحباً بك يا غالي! تشرفنا أسرة آل الحو بحضورك وتواجدك المبهج معنا بالشحر.";
+                
+                // إزالة رسالة الكتابة وإضافة الرد الحقيقي
+                document.getElementById(typingId).remove();
+                appendMessage(botResponse, 'bot');
+            } catch (err) {
+                console.error("Chat Error:", err);
+                document.getElementById(typingId).remove();
+                appendMessage("أهلاً بك يا غالي! حضوركم يزيدنا شرفاً وابتهاجاً، ويسعدنا دوماً استقبالكم في منازلنا بمدينة الشحر العامرة بحضرموت.", 'bot');
+            }
+        }
+
+        function sendSuggestion(query) {
+            document.getElementById('chatInput').value = query;
+            sendMessage();
+        }
+
+        function appendMessage(text, sender) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const bubble = document.createElement('div');
+            const id = 'msg_' + Math.random().toString(36).substr(2, 9);
+            bubble.id = id;
+            bubble.className = `chat-bubble ${sender}`;
+            bubble.innerHTML = text;
+            messagesContainer.appendChild(bubble);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            return id;
+        }
+    </script>
+</body>
+</html>
